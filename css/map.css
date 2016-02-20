@@ -1,0 +1,11 @@
+.country{ fill: rgb(0, 75, 151); }
+
+.point {
+    fill: orange;
+    stroke-opacity: .1;
+    /*stroke: #FFF;*/
+}
+
+.hidden {
+    display: none;
+}
