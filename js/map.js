@@ -10,12 +10,7 @@ function map(data) {
 
     var clustered = false;
 
-    var format = d3.time.format.utc("%Y-%m-%dT%H:%M:%S.%LZ"); 
-
-
-    
-
-
+    var format = d3.time.format.utc("%Y-%m-%d %H:%M:%S"); 
 
 
     //Assings the svg canvas to the map div
@@ -110,7 +105,24 @@ function map(data) {
     });
 
 
+    this.filterTime = function (value) {
+        //Complete the code
+        console.log("value: ", value[0].getTime())
+        
+        var startTime = value[0].getTime();
+        var endTime = value[1].getTime();
 
+        d3.selectAll("circle").style("opacity", function(d) {
+          if(clustered){
+            var time = new Date(d.time);
+          }  
+          else{
+            var time = new Date(d.properties.time);
+          }
+         return (startTime <= time.getTime() && time.getTime() <= endTime) ? 1 : 0;
+        });
+
+    };
 
 
     //Call a given datamining algorithm
