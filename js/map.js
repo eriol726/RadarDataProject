@@ -12,10 +12,10 @@ function map(data) {
 
     var format = d3.time.format.utc("%Y-%m-%dT%H:%M:%S.%LZ"); 
 
-
-    
-
-
+    //Variable for OPTICS
+    var opticsArray = [];
+    var distRad;
+    var minPts;
 
 
     //Assings the svg canvas to the map div
@@ -122,10 +122,17 @@ function map(data) {
 
 
 
-    //Call a given datamining algorithm
+    /*Call a given datamining algorithm
+    -----------------------------------------------------------------
+    Clustering algorithms
+    - Density-based spatial clustering of applications with noise (DBSCAN)
+    - Ordering points to identify the clustering structure (OPTICS)
+    
+    */
     this.cluster = function () {
-        //Complete the code
-        
+
+        //OPTICS
+        opticsArray = optics(distRad, minPts);
         
     };
 
