@@ -42,7 +42,7 @@ function map(data) {
 
     var map = new google.maps.Map(d3.select("#map").node(), {
       zoom: 8,
-      center: new google.maps.LatLng(37.76487, -122.41948),
+      center: new google.maps.LatLng(59.3333333, 18.05),
       mapTypeId: google.maps.MapTypeId.TERRAIN
     });
         
