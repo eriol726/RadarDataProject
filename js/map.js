@@ -67,11 +67,18 @@ function map(data) {
         overlay.draw = function() {
             var projection = this.getProjection(),
                   padding = 10;
-
-            
+/*
+            var point = g.selectAll("circle")
+                .data(geoData.features)
+                .enter().append("circle")
+                .attr("cx", function (d) { return projection(d.geometry.coordinates)[0]; })
+                .attr("cy", function (d) { return projection(d.geometry.coordinates)[1]; })
+                .attr("r",2 )
+                .attr("class", "showDot")
+                .style("fill", "orange"); */
 
             var marker = layer.selectAll("svg")
-                  .data(d3.entries(data))
+                  .data(geoData.features)
                   .each(transform) // update existing markers
                   .enter().append("svg")
                   .each(transform)
@@ -91,7 +98,7 @@ function map(data) {
                   .text(function(d) { return d.key; });
 
             function transform(d) {
-                d = new google.maps.LatLng(d.value[1], d.value[0]);
+                d = new google.maps.LatLng(d.geometry.coordinates[1], d.geometry.coordinates[0]);
                 d = projection.fromLatLngToDivPixel(d);
                 return d3.select(this)
                     .style("left", (d.x - padding) + "px")
