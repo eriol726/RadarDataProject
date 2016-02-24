@@ -53,7 +53,7 @@ function map(data) {
         return newData;
     }
     
-    console.log("data", geoData.features)
+    //console.log("data", geoData.features)
 
     var overlay = new google.maps.OverlayView();
 
@@ -67,6 +67,8 @@ function map(data) {
         overlay.draw = function() {
             var projection = this.getProjection(),
                   padding = 10;
+
+            
 
             var marker = layer.selectAll("svg")
                   .data(d3.entries(data))
