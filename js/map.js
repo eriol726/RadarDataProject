@@ -1,5 +1,6 @@
 function map(data) {
 
+
     var zoom = d3.behavior.zoom()
             .scaleExtent([0.5, 8])
             .on("zoom", move);
@@ -38,17 +39,62 @@ function map(data) {
             .call(zoom);
 
     var g = svg.append("g");
+
+    var map = new google.maps.Map(d3.select("#map").node(), {
+      zoom: 8,
+      center: new google.maps.LatLng(37.76487, -122.41948),
+      mapTypeId: google.maps.MapTypeId.TERRAIN
+    });
+        
     
-    //console.log("data", geoData.features[0]);
-    //Loads geo data
-    d3.json("data/uk.json", function (error, uk) {
-        if (error) return console.error(error);
-        console.log("test", data);
-        svg.selectAll(".subunits")
-          .datum(topojson.feature(uk, uk.objects.subunits))
-          .enter().append("path")
-          .attr("d", path)
-          
+    d3.json("data/stations.json", function(error, data) {
+        if (error) throw error;
+
+        var overlay = new google.maps.OverlayView();
+
+        // Add the container when the overlay is added to the map.
+        overlay.onAdd = function() {
+            var layer = d3.select(this.getPanes().overlayLayer).append("div")
+                .attr("class", "stations");
+
+            // Draw each marker as a separate SVG element.
+            // We could use a single SVG, but what size would it have?
+            overlay.draw = function() {
+                var projection = this.getProjection(),
+                      padding = 10;
+
+                var marker = layer.selectAll("svg")
+                      .data(d3.entries(data))
+                      .each(transform) // update existing markers
+                    .enter().append("svg")
+                      .each(transform)
+                      .attr("class", "marker");
+
+                // Add a circle.
+                marker.append("circle")
+                      .attr("r", 4.5)
+                      .attr("cx", padding)
+                      .attr("cy", padding);
+
+                // Add a label.
+                marker.append("text")
+                      .attr("x", padding + 7)
+                      .attr("y", padding)
+                      .attr("dy", ".31em")
+                      .text(function(d) { return d.key; });
+
+                function transform(d) {
+                    d = new google.maps.LatLng(d.value[1], d.value[0]);
+                    d = projection.fromLatLngToDivPixel(d);
+                    return d3.select(this)
+                        .style("left", (d.x - padding) + "px")
+                        .style("top", (d.y - padding) + "px");
+                }
+            };
+        };
+
+      // Bind our overlay to the map…
+      overlay.setMap(map);
     });
 
     //Calls the filtering function 
