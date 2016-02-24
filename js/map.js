@@ -10,12 +10,13 @@ function map(data) {
 
     var clustered = false;
 
-    var format = d3.time.format.utc("%Y-%m-%dT%H:%M:%S.%LZ"); 
 
     //Variable for OPTICS
     var opticsArray = [];
     var distRad;
     var minPts;
+
+    var format = d3.time.format.utc("%Y-%m-%d %H:%M:%S"); 
 
 
     //Assings the svg canvas to the map div
@@ -61,23 +62,15 @@ function map(data) {
 
     // Add the container when the overlay is added to the map.
     overlay.onAdd = function() {
-        var layer = d3.select(this.getPanes().overlayLayer).append("div")
+        var layer = d3.select(this.getPanes().overlayMouseTarget).append("div")
             .attr("class", "stations");
+
 
         // Draw each marker as a separate SVG element.
         // We could use a single SVG, but what size would it have?
         overlay.draw = function() {
             var projection = this.getProjection(),
                   padding = 10;
-/*
-            var point = g.selectAll("circle")
-                .data(geoData.features)
-                .enter().append("circle")
-                .attr("cx", function (d) { return projection(d.geometry.coordinates)[0]; })
-                .attr("cy", function (d) { return projection(d.geometry.coordinates)[1]; })
-                .attr("r",2 )
-                .attr("class", "showDot")
-                .style("fill", "orange"); */
 
             var marker = layer.selectAll("svg")
                   .data(geoData.features)
@@ -85,12 +78,15 @@ function map(data) {
                   .enter().append("svg")
                   .each(transform)
                   .attr("class", "marker");
+            
+
 
             // Add a circle.
             marker.append("circle")
                   .attr("r", 4.5)
                   .attr("cx", padding)
                   .attr("cy", padding);
+            
 
             // Add a label.
             marker.append("text")
@@ -98,6 +94,8 @@ function map(data) {
                   .attr("y", padding)
                   .attr("dy", ".31em")
                   .text(function(d) { return d.key; });
+            
+              
 
             function transform(d) {
                 d = new google.maps.LatLng(d.geometry.coordinates[1], d.geometry.coordinates[0]);
@@ -106,6 +104,28 @@ function map(data) {
                     .style("left", (d.x - padding) + "px")
                     .style("top", (d.y - padding) + "px");
             }
+
+            marker.on("click",  function(d){
+
+
+                    marker.selectAll("circle")
+                        .style("opacity", function(mark){
+                        console.log(mark.properties.id)
+
+                        if(mark.properties.id == d.properties.id)
+                            return 1;
+                        else 
+                            return 0.1;
+                    })                  
+            })  
+
+           // d3.selectAll("circle")
+             //   .on("click",  function(d) {
+               //  return filterID(d.properties.id);
+            //});
+
+           
+            
         };
     };
 
@@ -119,6 +139,24 @@ function map(data) {
     });
 
 
+    this.filterTime = function (value) {
+        //Complete the code
+        console.log("value: ", value[0].getTime())
+        
+        var startTime = value[0].getTime();
+        var endTime = value[1].getTime();
+
+        d3.selectAll("circle").style("opacity", function(d) {
+          if(clustered){
+            var time = new Date(d.time);
+          }  
+          else{
+            var time = new Date(d.properties.time);
+          }
+         return (startTime <= time.getTime() && time.getTime() <= endTime) ? 1 : 0;
+        });
+
+    };
 
 
 
@@ -142,5 +180,6 @@ function map(data) {
         var elem = document.getElementById('info');
         elem.innerHTML = "Place: " + value["place"] + " / Depth: " + value["depth"] + " / Magnitude: " + value["mag"] + "&nbsp;";
     }
+
 }
  
