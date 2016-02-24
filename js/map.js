@@ -6,9 +6,7 @@ function map(data) {
 
     var margin = {top: 20, right: 20, bottom: 20, left: 20},
         width = mapDiv.width() - margin.right - margin.left,
-        height = mapDiv.height() - margin.top - margin.bottom;
-
-    var clustered = false;
+        height = mapDiv.height() - margin.top - margin.bottom ;
 
     var format = d3.time.format.utc("%Y-%m-%d %H:%M:%S"); 
 
@@ -135,18 +133,17 @@ function map(data) {
 
     this.filterTime = function (value) {
         //Complete the code
-        console.log("value: ", value[0].getTime())
+        
         
         var startTime = value[0].getTime();
         var endTime = value[1].getTime();
 
+        console.log("startTime: ", startTime, " --- endTime: ", endTime);
+
         d3.selectAll("circle").style("opacity", function(d) {
-          if(clustered){
-            var time = new Date(d.time);
-          }  
-          else{
+
             var time = new Date(d.properties.time);
-          }
+          
          return (startTime <= time.getTime() && time.getTime() <= endTime) ? 1 : 0;
         });
 

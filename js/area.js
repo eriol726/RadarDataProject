@@ -2,20 +2,24 @@
 //http://bl.ocks.org/mbostock/1667367
 
 function area(data) {
-    var areaDiv = $("#area");
+    var areaDivSmall = $("#areaSmall");
+    var areaDivBig = $("#areaBig");
 
     var margin = {top: 100, right: 40, bottom: 100, left: 40},
-    margin2 = {top: areaDiv.height() - 50, right: 40, bottom: 20, left: 40},
-    width = areaDiv.width() - margin.left - margin.right,
-            height = areaDiv.height() - margin.top - margin.bottom,
-            height2 = areaDiv.height() - margin2.top - margin2.bottom;
+        margin2 = {top: areaDivSmall.height() - 50, right: 40, bottom: 20, left: 40},
+        width = areaDivBig.width() - margin.left - margin.right,
+        width2 = areaDivSmall.width() - margin2.left - margin2.right,
+        height = areaDivBig.height() - margin.top - margin.bottom,
+        height2 = areaDivSmall.height() - margin2.top - margin2.bottom;
+
+console.log("margin: ",margin2);
 
     //Sets the data format
     var format = d3.time.format.utc("%Y-%m-%d %H:%M:%S").parse;//Complete the code
 
     //Sets the scales 
     var x = d3.time.scale().range([0, width]),
-        x2 = d3.time.scale().range([0, width]),
+        x2 = d3.time.scale().range([0, width2]),
         y = d3.scale.linear().range([height, 0]),
         y2 = d3.scale.linear().range([height2, 0]);
     
@@ -54,24 +58,34 @@ console.log("data:", data[0].id)
             });
     
     //Assings the svg canvas to the area div
-    var svg = d3.select("#area").append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom);
+    var svgSmall = d3.select("#areaSmall").append("svg")
+            .attr("width", width2 + margin2.left + margin2.right)
+            .attr("height", height2 + margin2.top + margin2.bottom);
+
+    var svgBig = d3.select("#areaBig").append("svg")
+            .attr("width",  width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom );
     
     //Defines clip region
-    svg.append("defs").append("clipPath")
+    svgSmall.append("defs").append("clipPath")
+            .attr("id", "clip")
+            .append("rect")
+            .attr("width", width2)
+            .attr("height", height2);
+
+    svgBig.append("defs").append("clipPath")
             .attr("id", "clip")
             .append("rect")
             .attr("width", width)
             .attr("height", height);
     
     //Defines the focus area
-    var focus = svg.append("g")
+    var focus = svgBig.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     
     //Defines the context area
-    var context = svg.append("g")
-            .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+    var context = svgSmall.append("g")
+            .attr("transform", "translate(" + margin2.left + "," +  margin2.top + ")");
 
     //Initializes the axis domains for the big chart
     x.domain(dimensions = d3.extent(data.map(function(d) { return format(d.date); })));
