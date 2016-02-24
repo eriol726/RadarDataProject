@@ -1,13 +1,8 @@
 
-var map1;
 
-var none = 1;
-    map1 = new map(none);
-/*
-d3.csv("data/data.csv", function (data) {
+d3.csv("data/taxi_sthlm_march_2013.csv", function (data) {
 
-	map1 = new map(none);
+	map1 = new map(data);
 
 });
 
-*/
