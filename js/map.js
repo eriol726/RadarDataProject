@@ -69,15 +69,6 @@ function map(data) {
         overlay.draw = function() {
             var projection = this.getProjection(),
                   padding = 10;
-/*
-            var point = g.selectAll("circle")
-                .data(geoData.features)
-                .enter().append("circle")
-                .attr("cx", function (d) { return projection(d.geometry.coordinates)[0]; })
-                .attr("cy", function (d) { return projection(d.geometry.coordinates)[1]; })
-                .attr("r",2 )
-                .attr("class", "showDot")
-                .style("fill", "orange"); */
 
             var marker = layer.selectAll("svg")
                   .data(geoData.features)
@@ -135,5 +126,6 @@ function map(data) {
         var elem = document.getElementById('info');
         elem.innerHTML = "Place: " + value["place"] + " / Depth: " + value["depth"] + " / Magnitude: " + value["mag"] + "&nbsp;";
     }
+
 }
  
