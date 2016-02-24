@@ -10,7 +10,7 @@ function map(data) {
 
     var clustered = false;
 
-    var format = d3.time.format.utc("%Y-%m-%dT%H:%M:%S.%LZ");
+    var format = d3.time.format.utc("%Y-%m-%dT%H:%M:%S.%LZ"); 
 
 
     
@@ -32,6 +32,7 @@ function map(data) {
       mapTypeId: google.maps.MapTypeId.TERRAIN
     });
 
+    //Format to geoData
     var geoData = {type: "FeatureCollection", features: geoFormat(data)};
     
     function geoFormat(array) {
@@ -50,6 +51,7 @@ function map(data) {
                 }
             });
         });
+
         return newData;
     }
     
@@ -120,7 +122,7 @@ function map(data) {
 
 
 
-    //Calls k-means function and changes the color of the points  
+    //Call a given datamining algorithm
     this.cluster = function () {
         //Complete the code
         
