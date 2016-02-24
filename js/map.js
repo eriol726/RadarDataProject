@@ -8,6 +8,12 @@ function map(data) {
         width = mapDiv.width() - margin.right - margin.left,
         height = mapDiv.height() - margin.top - margin.bottom ;
 
+
+    //Variable for OPTICS
+    var opticsArray = [];
+    var distRad;
+    var minPts;
+
     var format = d3.time.format.utc("%Y-%m-%d %H:%M:%S"); 
 
 
@@ -151,10 +157,17 @@ function map(data) {
 
 
 
-    //Call a given datamining algorithm
+    /*Call a given datamining algorithm
+    -----------------------------------------------------------------
+    Clustering algorithms
+    - Density-based spatial clustering of applications with noise (DBSCAN)
+    - Ordering points to identify the clustering structure (OPTICS)
+    
+    */
     this.cluster = function () {
-        //Complete the code
-        
+
+        //OPTICS
+        opticsArray = optics(distRad, minPts);
         
     };
 
