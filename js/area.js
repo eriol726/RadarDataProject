@@ -5,9 +5,9 @@ function area(data) {
     var areaDivSmall = $("#areaSmall");
     var areaDivBig = $("#areaBig");
 
-    calculateDrives(data);
+    var ridesAndIds = calculateDrives(data);
+   console.log((ridesAndIds[1]))
 
-    var nrDrivesForEachID = number = 0;
     var margin = {top: 100, right: 40, bottom: 100, left: 40},
         margin2 = {top: areaDivSmall.height() - 50, right: 40, bottom: 20, left: 40},
         width = areaDivBig.width() - margin.left - margin.right,
@@ -133,52 +133,58 @@ function area(data) {
             .attr("y", -6)
             .attr("height", height2 + 7);
     
+    
   
      
 
     //Method for brushing
     function brush() {
+
         x.domain(brush.empty() ? x2.domain() : brush.extent());
         focus.select("path").attr("d", area);
         focus.select(".x.axis").call(xAxis);
         //Complete the code
 
-       map1.filterTime(brush.extent());
+        //map1.filterTime(brush.extent());
     }
 
     function calculateDrives(data)
-    {
+    {   
+       var nrSpecificIds =[];
         
-       sortByKey(data,"id");
+       var dataSorted = data;
+       sortByKey(dataSorted,"id");
        var counter = 0;
        var map = [];
-    //create id specific map 
+        //create id specific map 
        var count = 0;
        do{
             map[counter] = [];
             var inner = 0;
 
-            while(data[count].id == data[count+1].id){
-                map[counter][inner] = data[count];
+            while(data[count].id == dataSorted[count+1].id){
+                map[counter][inner] = dataSorted[count];
                 count++;
                 inner++;
             }
            
-
-            map[counter][inner] = data[count];
+            nrSpecificIds[counter] = dataSorted[count].id;
+            map[counter][inner] = dataSorted[count];
             count++;
             counter++;
 
-       }
-       while( !(typeof data[count+1] == "undefined" ))
+        }
+        while( !(typeof dataSorted[count+1] == "undefined" ))
+        
+
+
+
         //map contains an list of arrays
         //where eah array contains an array with
         //an specific id
         //
         // [id 1]              // [id2]
         //[all objs with id1]  // [all objs with id2]
-
-
         var format = d3.time.format.utc("%Y-%m-%d %H:%M:%S").parse;
         var data2 = [];
         var index = 0;
@@ -202,18 +208,22 @@ function area(data) {
                     
                     if(d[i].hired == "f" && d[i+1].hired == "t")
                     {   
-                        console.log("ff")
+                       // console.log("ff")
                         nrOfRides[j]++;
                     }
                 }
             })
         })
-        console.log(data2)
-        console.log(nrOfRides[5])
+        //console.log(data2)
+        //console.log(nrOfRides[5])
+        
+        
 
+        return [nrOfRides,nrSpecificIds]
 
 
     }
+
     function sortByKey(array, key) {
         return array.sort(function(a, b) {
             var x = a[key]; var y = b[key];
