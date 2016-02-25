@@ -5,6 +5,9 @@ function area(data) {
     var areaDivSmall = $("#areaSmall");
     var areaDivBig = $("#areaBig");
 
+    calculateDrives(data);
+
+    var nrDrivesForEachID = number = 0;
     var margin = {top: 100, right: 40, bottom: 100, left: 40},
         margin2 = {top: areaDivSmall.height() - 50, right: 40, bottom: 20, left: 40},
         width = areaDivBig.width() - margin.left - margin.right,
@@ -12,14 +15,14 @@ function area(data) {
         height = areaDivBig.height() - margin.top - margin.bottom,
         height2 = areaDivSmall.height() - margin2.top - margin2.bottom;
 
-console.log("margin: ",margin2);
 
     //Sets the data format
     var format = d3.time.format.utc("%Y-%m-%d %H:%M:%S").parse;//Complete the code
 
     //Sets the scales 
-    var x = d3.time.scale().range([0, width]),
-        x2 = d3.time.scale().range([0, width2]),
+   
+    var x = d3.scale.linear().range([0, width]),
+        x2 = d3.scale.linear().range([0, width2]),
         y = d3.scale.linear().range([height, 0]),
         y2 = d3.scale.linear().range([height2, 0]);
     
@@ -33,13 +36,13 @@ console.log("margin: ",margin2);
             .x(x2)
             .on("brush", brush);
     
-console.log("data:", data[0].id)
+
 
     //Creates the big chart
     var area = d3.svg.area()
             .interpolate("step")
             .x(function (d) {
-                return x(format(d.date));//Complete the code
+                return x(parseFloat(d.id));//Complete the code
             })
             .y0(height)
             .y1(function (d) {
@@ -50,7 +53,7 @@ console.log("data:", data[0].id)
     var area2 = d3.svg.area()
             .interpolate("step")
             .x(function (d) {
-                return x2(format(d.date));//Complete the code
+                return x2(parseFloat(d.id));//Complete the code
             })
             .y0(height2)
             .y1(function (d) {
@@ -88,7 +91,7 @@ console.log("data:", data[0].id)
             .attr("transform", "translate(" + margin2.left + "," +  margin2.top + ")");
 
     //Initializes the axis domains for the big chart
-    x.domain(dimensions = d3.extent(data.map(function(d) { return format(d.date); })));
+    x.domain(dimensions = d3.extent(data.map(function(d) { return parseFloat(d.id) })));
     y.domain(dimensions2 = d3.extent(data.map(function(d) { return parseFloat(d.id); })));
     //Initializes the axis domains for the small chart
     x2.domain(x.domain());
@@ -142,4 +145,80 @@ console.log("data:", data[0].id)
 
        map1.filterTime(brush.extent());
     }
+
+    function calculateDrives(data)
+    {
+        
+       sortByKey(data,"id");
+       var counter = 0;
+       var map = [];
+    //create id specific map 
+       var count = 0;
+       do{
+            map[counter] = [];
+            var inner = 0;
+
+            while(data[count].id == data[count+1].id){
+                map[counter][inner] = data[count];
+                count++;
+                inner++;
+            }
+           
+
+            map[counter][inner] = data[count];
+            count++;
+            counter++;
+
+       }
+       while( !(typeof data[count+1] == "undefined" ))
+        //map contains an list of arrays
+        //where eah array contains an array with
+        //an specific id
+        //
+        // [id 1]              // [id2]
+        //[all objs with id1]  // [all objs with id2]
+
+
+        var format = d3.time.format.utc("%Y-%m-%d %H:%M:%S").parse;
+        var data2 = [];
+        var index = 0;
+        map.forEach(function(d,i){
+            var date2 = [];
+            data2[i] = [];
+            var data3 = sortByKey(d,"date")
+            data2[i] = data3;
+        })
+        //same construction as map sorted on time
+        var nrOfRides = [];
+        
+        data2.forEach(function(d,j)
+        {   
+            nrOfRides[j] = 0;
+            d.forEach(function(di,i)
+            {
+                
+                if(i+1 < d.length)
+                {   
+                    
+                    if(d[i].hired == "f" && d[i+1].hired == "t")
+                    {   
+                        console.log("ff")
+                        nrOfRides[j]++;
+                    }
+                }
+            })
+        })
+        console.log(data2)
+        console.log(nrOfRides[5])
+
+
+
+    }
+    function sortByKey(array, key) {
+        return array.sort(function(a, b) {
+            var x = a[key]; var y = b[key];
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        });
+    }    
+   
 }
