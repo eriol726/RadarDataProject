@@ -117,6 +117,10 @@ function map(data) {
                     
                 var cc = {};
 
+                    
+                    console.log(! (typeof self.flightPath == "undefined"))
+                    if(! (typeof self.flightPath == "undefined")){removeLine();}
+                    
                     //On click highlight the clicked dot by lower the opacity on all others.
                     marker.selectAll("circle")
                         .style("opacity", function(mark, i){
@@ -152,16 +156,17 @@ function map(data) {
                       
                         transformedPoints.push(coord);
                     })
-                    console.log("Transformed: " + transformedPoints)
+                    console.log("Transformedpoints: " + transformedPoints)
                   
-                    var flightPath = new google.maps.Polyline({
+                    self.flightPath = new google.maps.Polyline({
                                 path: transformedPoints,
                                 geodesic: true,
                                 strokeColor: '#FF0000',
                                 strokeOpacity: 1.0,
                                 strokeWeight: 2
                     });
-                    flightPath.setMap(map);                 
+                    addLine();
+                 
             })  
 
 
@@ -326,6 +331,15 @@ function map(data) {
         return [nrOfRides,nrSpecificIds]
 
 
+    }
+
+
+    function addLine() {
+      self.flightPath.setMap(map);
+    }
+
+    function removeLine() {
+      self.flightPath.setMap(null);
     }
 
     function sortByKey(array, key) {
