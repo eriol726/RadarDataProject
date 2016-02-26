@@ -5,9 +5,7 @@ function area(data) {
     var areaDivSmall = $("#areaSmall");
     var areaDivBig = $("#areaBig");
 
-   // var ridesAndIds = calculateDrives(data);
 
-    console.log("data: ", data.features[1]);
 
     var margin = {top: 100, right: 40, bottom: 100, left: 40},
         margin2 = {top: areaDivSmall.height() - 50, right: 40, bottom: 20, left: 40},
@@ -57,7 +55,7 @@ function area(data) {
             })
             .y0(height2)
             .y1(function (d) {
-                return y2(parseFloat(d.properties.id));//Complete the code
+                return y2(parseFloat(d.properties.customers));//Complete the code
             });
     
     //Assings the svg canvas to the area div
@@ -147,6 +145,7 @@ function area(data) {
         focus.select("path").attr("d", area);
         focus.select(".x.axis").call(xAxis);
         //Complete the code
+
 
         map1.filterTime(brush.extent());
     }
