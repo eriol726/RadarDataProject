@@ -159,18 +159,20 @@ function map(data) {
 
     /*Call a given datamining algorithm
     -----------------------------------------------------------------
-    Clustering algorithms
+    Density based clustering algorithms
     - Density-based spatial clustering of applications with noise (DBSCAN)
     - Ordering points to identify the clustering structure (OPTICS)
-    
+
+    Tree classifier
+    - CART (binary tree, find patterns in hire)
     */
     this.cluster = function () {
 
         //OPTICS
-        opticsArray = optics(distRad, minPts);
+        opticsArray = optics(data, distRad, minPts);
         
     };
-
+    
 
     //Prints features attributes
     function printInfo(value) {
