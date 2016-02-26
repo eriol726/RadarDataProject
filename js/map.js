@@ -1,7 +1,7 @@
 function map(data) {
 
 
-
+    var self = this;
     var mapDiv = $("#map");
 
     var margin = {top: 20, right: 20, bottom: 20, left: 20},
@@ -53,6 +53,7 @@ function map(data) {
 
         return newData;
     }
+ 
     
     //console.log("data", geoData.features)
 
@@ -108,13 +109,49 @@ function map(data) {
 
                     marker.selectAll("circle")
                         .style("opacity", function(mark){
-                        console.log(mark.properties.id)
 
-                        if(mark.properties.id == d.properties.id)
+                        if(mark.properties.id == d.properties.id) {
+                            
+                            var markedID = 0;
+                            self.markedID = d.properties.id;
+                           
+
                             return 1;
+                        }
                         else 
                             return 0.1;
-                    })                  
+                    }) 
+                   
+                    
+                    var points = area1.lineData(); 
+                    console.log(points)
+                    
+                    var transformedPoints = [];
+
+                    points.forEach(function(d){
+                        
+
+                        var coord = {lat: d[1], lng: d[0]};
+                      
+                        transformedPoints.push(coord);
+                    })
+                    console.log(transformedPoints)
+                    var flightPlanCoordinates = [
+                        {lat: 37.772, lng: -122.214},
+                        {lat: 21.291, lng: -157.821},
+                        {lat: -18.142, lng: 178.431},
+                        {lat: -27.467, lng: 153.027}
+                      ];
+
+  console.log(flightPlanCoordinates)
+                    var flightPath = new google.maps.Polyline({
+                                path: transformedPoints,
+                                geodesic: true,
+                                strokeColor: '#FF0000',
+                                strokeOpacity: 1.0,
+                                strokeWeight: 2
+                    });
+                    flightPath.setMap(map);                 
             })  
 
            // d3.selectAll("circle")
@@ -122,7 +159,6 @@ function map(data) {
                //  return filterID(d.properties.id);
             //});
 
-           
             
         };
     };
@@ -144,7 +180,6 @@ function map(data) {
         var startTime = value[0].getTime();
         var endTime = value[1].getTime();
 
-        console.log("startTime: ", startTime, " --- endTime: ", endTime);
 
         d3.selectAll("circle").style("opacity", function(d) {
 

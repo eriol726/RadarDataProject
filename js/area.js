@@ -4,9 +4,8 @@
 function area(data) {
     var areaDivSmall = $("#areaSmall");
     var areaDivBig = $("#areaBig");
-
+    var self = this;
     var ridesAndIds = calculateDrives(data);
-   console.log((ridesAndIds[1]))
 
     var margin = {top: 100, right: 40, bottom: 100, left: 40},
         margin2 = {top: areaDivSmall.height() - 50, right: 40, bottom: 20, left: 40},
@@ -217,12 +216,28 @@ function area(data) {
         //console.log(data2)
         //console.log(nrOfRides[5])
         
-        
-
+        var resData = [];
+        self.resData = data2;
         return [nrOfRides,nrSpecificIds]
 
 
     }
+    
+
+    this.lineData = function(){
+        var lineData = [];
+      
+        self.resData.forEach(function(d,j){
+            if(d[0].id == map1.markedID){
+                d.forEach(function(di,i){
+                    lineData.push([parseFloat(di.x_coord), parseFloat(di.y_coord)]);
+                })
+            }
+        })
+        return lineData;
+
+    }
+
 
     function sortByKey(array, key) {
         return array.sort(function(a, b) {
