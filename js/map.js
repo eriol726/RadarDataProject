@@ -123,14 +123,14 @@ function map(data) {
                             
                             var markedID = 0;
                             self.markedID = d.properties.id;
-                           
+                            
 
                             return 1;
                         }
                         else 
                             return 0.1;
                     }) 
-                   
+                 
                     
                     var points = area1.lineData(); 
                     console.log(points)
