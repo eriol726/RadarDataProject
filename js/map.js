@@ -2,6 +2,9 @@ function map(data) {
 
 
     var self = this;
+
+    var ridesAndIds = calculateDrives(data);
+
     var mapDiv = $("#map");
 
     var margin = {top: 20, right: 20, bottom: 20, left: 20},
@@ -32,9 +35,9 @@ function map(data) {
     });
 
     //Format to geoData
-    var geoData = {type: "FeatureCollection", features: geoFormat(data)};
+    var geoData = {type: "FeatureCollection", features: geoFormat(data,ridesAndIds)};
     
-    function geoFormat(array) {
+    function geoFormat(array,ridesAndIds ) {
         var newData = [];
         array.map(function (d, i) {
             newData.push({
@@ -46,7 +49,8 @@ function map(data) {
                 "properties" : {
                 "id" : d.id,
                 "time" : d.date,
-                "hired" : d.hired
+                "hired" : d.hired,
+                "customers": ridesAndIds[0][i]
                 }
             });
         });
@@ -95,7 +99,7 @@ function map(data) {
                   .text(function(d) { return d.key; });
             
               
-
+            //Draw data id's coordinates on google.maps
             function transform(d) {
                 d = new google.maps.LatLng(d.geometry.coordinates[1], d.geometry.coordinates[0]);
                 d = projection.fromLatLngToDivPixel(d);
@@ -104,11 +108,12 @@ function map(data) {
                     .style("top", (d.y - padding) + "px");
             }
 
+            //On click highlight the clicked dot by lower the opacity on all others. 
             marker.on("click",  function(d){
-
 
                     marker.selectAll("circle")
                         .style("opacity", function(mark){
+
 
                         if(mark.properties.id == d.properties.id) {
                             
@@ -136,14 +141,7 @@ function map(data) {
                         transformedPoints.push(coord);
                     })
                     console.log(transformedPoints)
-                    var flightPlanCoordinates = [
-                        {lat: 37.772, lng: -122.214},
-                        {lat: 21.291, lng: -157.821},
-                        {lat: -18.142, lng: 178.431},
-                        {lat: -27.467, lng: 153.027}
-                      ];
-
-  console.log(flightPlanCoordinates)
+                  
                     var flightPath = new google.maps.Polyline({
                                 path: transformedPoints,
                                 geodesic: true,
@@ -154,14 +152,19 @@ function map(data) {
                     flightPath.setMap(map);                 
             })  
 
+
            // d3.selectAll("circle")
              //   .on("click",  function(d) {
                //  return filterID(d.properties.id);
             //});
 
-            
+
         };
+
+        
     };
+
+   
 
     // Bind our overlay to the map…
     overlay.setMap(map);
@@ -175,8 +178,7 @@ function map(data) {
 
     this.filterTime = function (value) {
         //Complete the code
-        
-        
+       
         var startTime = value[0].getTime();
         var endTime = value[1].getTime();
 
@@ -187,7 +189,20 @@ function map(data) {
           
          return (startTime <= time.getTime() && time.getTime() <= endTime) ? 1 : 0;
         });
+            
+    };
 
+    //Function that filter to only pickups and dropoffs.
+    this.filterUpOff = function (value) {
+
+        console.log("SORTED: " + value);
+        //Sort data by id
+        var data = value;
+        //data.sort();
+
+        //Check if hired
+
+        //Set opacity to 0 for all dots between hired and not hired
     };
 
 
@@ -200,6 +215,8 @@ function map(data) {
 
     Tree classifier
     - CART (binary tree, find patterns in hire)
+
+    Screen Space Quality Method
     */
     this.cluster = function () {
 
@@ -207,13 +224,105 @@ function map(data) {
         opticsArray = optics(data, distRad, minPts);
         
     };
-    
+
+
+    this.getPushedData = function () {
+
+        //OPTICS
+        return geoData;
+        
+    };
+
 
     //Prints features attributes
     function printInfo(value) {
         var elem = document.getElementById('info');
         elem.innerHTML = "Place: " + value["place"] + " / Depth: " + value["depth"] + " / Magnitude: " + value["mag"] + "&nbsp;";
     }
+
+    function calculateDrives(data)
+    {   
+       var nrSpecificIds =[];
+        
+       var dataSorted = data;
+       sortByKey(dataSorted,"id");
+       var counter = 0;
+       var map = [];
+        //create id specific map 
+       var count = 0;
+       do{
+            map[counter] = [];
+            var inner = 0;
+
+            while(data[count].id == dataSorted[count+1].id){
+                map[counter][inner] = dataSorted[count];
+                count++;
+                inner++;
+            }
+           
+            nrSpecificIds[counter] = dataSorted[count].id;
+            map[counter][inner] = dataSorted[count];
+            count++;
+            counter++;
+
+        }
+        while( !(typeof dataSorted[count+1] == "undefined" ))
+        
+
+        console.log(map[0])
+
+
+        //map contains an list of arrays
+        //where eah array contains an array with
+        //an specific id
+        //
+        // [id 1]              // [id2]
+        //[all objs with id1]  // [all objs with id2]
+        var format = d3.time.format.utc("%Y-%m-%d %H:%M:%S").parse;
+        var data2 = [];
+        var index = 0;
+        map.forEach(function(d,i){
+            var date2 = [];
+            data2[i] = [];
+            var data3 = sortByKey(d,"date")
+            data2[i] = data3;
+        })
+        //same construction as map sorted on time
+        var nrOfRides = [];
+        
+        data2.forEach(function(d,j)
+        {   
+            nrOfRides[j] = 0;
+            d.forEach(function(di,i)
+            {
+                
+                if(i+1 < d.length)
+                {   
+                    
+                    if(d[i].hired == "f" && d[i+1].hired == "t")
+                    {   
+                       // console.log("ff")
+                        nrOfRides[j]++;
+                    }
+                }
+            })
+        })
+        //console.log(data2)
+        //console.log(nrOfRides[5])
+        var selfData = [];
+        self.selfData = data2;
+        return [nrOfRides,nrSpecificIds]
+
+
+    }
+
+    function sortByKey(array, key) {
+        return array.sort(function(a, b) {
+            var x = a[key]; var y = b[key];
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        });
+    }    
+
 
 }
  
