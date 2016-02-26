@@ -5,8 +5,9 @@ function area(data) {
     var areaDivSmall = $("#areaSmall");
     var areaDivBig = $("#areaBig");
 
-    var ridesAndIds = calculateDrives(data);
-   console.log((ridesAndIds[1]))
+   // var ridesAndIds = calculateDrives(data);
+
+    console.log("data: ", data.features[1]);
 
     var margin = {top: 100, right: 40, bottom: 100, left: 40},
         margin2 = {top: areaDivSmall.height() - 50, right: 40, bottom: 20, left: 40},
@@ -15,14 +16,13 @@ function area(data) {
         height = areaDivBig.height() - margin.top - margin.bottom,
         height2 = areaDivSmall.height() - margin2.top - margin2.bottom;
 
-
     //Sets the data format
     var format = d3.time.format.utc("%Y-%m-%d %H:%M:%S").parse;//Complete the code
 
     //Sets the scales 
    
-    var x = d3.scale.linear().range([0, width]),
-        x2 = d3.scale.linear().range([0, width2]),
+    var x = d3.time.scale().range([0, width]),
+        x2 = d3.time.scale().range([0, width2]),
         y = d3.scale.linear().range([height, 0]),
         y2 = d3.scale.linear().range([height2, 0]);
     
@@ -42,22 +42,22 @@ function area(data) {
     var area = d3.svg.area()
             .interpolate("step")
             .x(function (d) {
-                return x(parseFloat(d.id));//Complete the code
+                return x(format(d.properties.time));//Complete the code
             })
             .y0(height)
             .y1(function (d) {
-                return y(parseFloat(d.id));//Complete the code
+                return y(parseFloat(d.properties.customers));//Complete the code
             });
     
     //Creates the small chart        
     var area2 = d3.svg.area()
             .interpolate("step")
             .x(function (d) {
-                return x2(parseFloat(d.id));//Complete the code
+                return x2(format(d.properties.time));//Complete the code
             })
             .y0(height2)
             .y1(function (d) {
-                return y2(parseFloat(d.id));//Complete the code
+                return y2(parseFloat(d.properties.id));//Complete the code
             });
     
     //Assings the svg canvas to the area div
@@ -90,16 +90,19 @@ function area(data) {
     var context = svgSmall.append("g")
             .attr("transform", "translate(" + margin2.left + "," +  margin2.top + ")");
 
+    // console.log(ridesAndIds[0]);
+
     //Initializes the axis domains for the big chart
-    x.domain(dimensions = d3.extent(data.map(function(d) { return parseFloat(d.id) })));
-    y.domain(dimensions2 = d3.extent(data.map(function(d) { return parseFloat(d.id); })));
+    x.domain(dimensions = d3.extent(data.features.map(function(d) { return format(d.properties.time); })));
+    y.domain(dimensions2 = d3.extent(data.features.map(function(d) { return parseFloat(d.properties.customers); })));
     //Initializes the axis domains for the small chart
     x2.domain(x.domain());
     y2.domain(y.domain());
 
+    //console.log(data.features)
     //Appends the big chart to the focus area
     focus.append("path")
-            .datum(data)
+            .datum(data.features)
             .attr("clip-path", "url(#clip)")
             .attr("d", area);
     
@@ -116,7 +119,7 @@ function area(data) {
 
     //Appends the small chart to the focus area        
     context.append("path")
-            .datum(data)
+            .datum(data.features)
             .attr("d", area2);
     
     //Appends the x axis 
@@ -145,90 +148,9 @@ function area(data) {
         focus.select(".x.axis").call(xAxis);
         //Complete the code
 
-        //map1.filterTime(brush.extent());
+        map1.filterTime(brush.extent());
     }
 
-    function calculateDrives(data)
-    {   
-       var nrSpecificIds =[];
-        
-       var dataSorted = data;
-       sortByKey(dataSorted,"id");
-       var counter = 0;
-       var map = [];
-        //create id specific map 
-       var count = 0;
-       do{
-            map[counter] = [];
-            var inner = 0;
-
-            while(data[count].id == dataSorted[count+1].id){
-                map[counter][inner] = dataSorted[count];
-                count++;
-                inner++;
-            }
-           
-            nrSpecificIds[counter] = dataSorted[count].id;
-            map[counter][inner] = dataSorted[count];
-            count++;
-            counter++;
-
-        }
-        while( !(typeof dataSorted[count+1] == "undefined" ))
-        
-
-
-
-        //map contains an list of arrays
-        //where eah array contains an array with
-        //an specific id
-        //
-        // [id 1]              // [id2]
-        //[all objs with id1]  // [all objs with id2]
-        var format = d3.time.format.utc("%Y-%m-%d %H:%M:%S").parse;
-        var data2 = [];
-        var index = 0;
-        map.forEach(function(d,i){
-            var date2 = [];
-            data2[i] = [];
-            var data3 = sortByKey(d,"date")
-            data2[i] = data3;
-        })
-        //same construction as map sorted on time
-        var nrOfRides = [];
-        
-        data2.forEach(function(d,j)
-        {   
-            nrOfRides[j] = 0;
-            d.forEach(function(di,i)
-            {
-                
-                if(i+1 < d.length)
-                {   
-                    
-                    if(d[i].hired == "f" && d[i+1].hired == "t")
-                    {   
-                       // console.log("ff")
-                        nrOfRides[j]++;
-                    }
-                }
-            })
-        })
-        //console.log(data2)
-        //console.log(nrOfRides[5])
-        
-        
-
-        return [nrOfRides,nrSpecificIds]
-
-
-    }
-
-    function sortByKey(array, key) {
-        return array.sort(function(a, b) {
-            var x = a[key]; var y = b[key];
-            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-        });
-    }    
+    
    
 }
