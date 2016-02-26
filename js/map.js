@@ -1,7 +1,5 @@
 function map(data) {
 
-
-
     var mapDiv = $("#map");
 
     var margin = {top: 20, right: 20, bottom: 20, left: 20},
@@ -94,7 +92,7 @@ function map(data) {
                   .text(function(d) { return d.key; });
             
               
-
+            //Draw data id's coordinates on google.maps
             function transform(d) {
                 d = new google.maps.LatLng(d.geometry.coordinates[1], d.geometry.coordinates[0]);
                 d = projection.fromLatLngToDivPixel(d);
@@ -103,29 +101,37 @@ function map(data) {
                     .style("top", (d.y - padding) + "px");
             }
 
+            //On click highlight the clicked dot by lower the opacity on all others. 
             marker.on("click",  function(d){
 
 
                     marker.selectAll("circle")
                         .style("opacity", function(mark){
-                        console.log(mark.properties.id)
+                            //console.log(mark.properties.id)
+                           // map1.filterUpOff(mark.properties.id);
 
-                        if(mark.properties.id == d.properties.id)
-                            return 1;
-                        else 
-                            return 0.1;
-                    })                  
-            })  
+                            if (mark.properties.id == d.properties.id){
+                                //marker.style.color = "red";
+                     
+                                return 1;
+                            }
+                            else 
+                                return 0.1;
+                    })
+              
+            })
 
            // d3.selectAll("circle")
              //   .on("click",  function(d) {
                //  return filterID(d.properties.id);
             //});
 
-           
-            
         };
+
+        
     };
+
+   
 
     // Bind our overlay to the map…
     overlay.setMap(map);
@@ -155,6 +161,19 @@ function map(data) {
 
     };
 
+    //Function that filter to only pickups and dropoffs.
+    this.filterUpOff = function (value) {
+
+        console.log("SORTED: " + value);
+        //Sort data by id
+        var data = value;
+        //data.sort();
+
+        //Check if hired
+
+        //Set opacity to 0 for all dots between hired and not hired
+    };
+
 
 
     /*Call a given datamining algorithm
@@ -165,6 +184,8 @@ function map(data) {
 
     Tree classifier
     - CART (binary tree, find patterns in hire)
+
+    Screen Space Quality Method
     */
     this.cluster = function () {
 
@@ -172,6 +193,13 @@ function map(data) {
         opticsArray = optics(data, distRad, minPts);
         
     };
+
+    this.sortByKey = function (array, key) {
+        return array.sort(function (a, b) {
+            var x = a[key]; var y = b[key];
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        });
+    }
     
 
     //Prints features attributes

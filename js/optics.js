@@ -43,7 +43,7 @@
       https://www.youtube.com/watch?v=WebEVnnDRE4
     */
 
-    console.log("HEJ");
+    console.log("OPTICS");
 
 
 

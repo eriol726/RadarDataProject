@@ -6,7 +6,7 @@ function area(data) {
     var areaDivBig = $("#areaBig");
 
     var ridesAndIds = calculateDrives(data);
-   console.log((ridesAndIds[1]))
+   //console.log((ridesAndIds[1]))
 
     var margin = {top: 100, right: 40, bottom: 100, left: 40},
         margin2 = {top: areaDivSmall.height() - 50, right: 40, bottom: 20, left: 40},
@@ -145,6 +145,10 @@ function area(data) {
         focus.select(".x.axis").call(xAxis);
         //Complete the code
 
+        //console.log("BEFORE");
+        //map1.filterUpOff(brush.extent());
+        //console.log("EFTER");
+
         //map1.filterTime(brush.extent());
     }
 
@@ -153,7 +157,7 @@ function area(data) {
        var nrSpecificIds =[];
         
        var dataSorted = data;
-       sortByKey(dataSorted,"id");
+       map1.sortByKey(dataSorted,"id");
        var counter = 0;
        var map = [];
         //create id specific map 
@@ -191,7 +195,7 @@ function area(data) {
         map.forEach(function(d,i){
             var date2 = [];
             data2[i] = [];
-            var data3 = sortByKey(d,"date")
+            var data3 = map1.sortByKey(d,"date")
             data2[i] = data3;
         })
         //same construction as map sorted on time
@@ -224,7 +228,7 @@ function area(data) {
 
     }
 
-    function sortByKey(array, key) {
+    this.sortByKey = function (array, key) {
         return array.sort(function(a, b) {
             var x = a[key]; var y = b[key];
             return ((x < y) ? -1 : ((x > y) ? 1 : 0));
