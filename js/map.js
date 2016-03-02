@@ -4,7 +4,7 @@ function map(data) {
     var self = this;
 
     var ridesAndIds = calculateDrives(data);
-    var customersPerDay = totalCoustumerPerDay(data);
+    var ridesPerMonth = totalCoustumerPerMonth(data);
 
     var mapDiv = $("#map");
 
@@ -37,9 +37,9 @@ function map(data) {
 
     console.log("ridesAndIds", ridesAndIds[1][0].length)
     //Format to geoData
-    var geoData = {type: "FeatureCollection", features: geoFormat(data,ridesAndIds)};
+    var dataWithRides = {type: "FeatureCollection", features: uniqeIdFormat(data,ridesAndIds)};
     
-    function geoFormat(array,ridesAndIds ) {
+    function uniqeIdFormat(array,ridesAndIds ) {
         var newData = [];
         array.map(function (d, i) {
             
@@ -60,6 +60,8 @@ function map(data) {
 
         return newData;
     }
+
+    
  
     
     //console.log("data", geoData.features)
@@ -79,7 +81,7 @@ function map(data) {
                   padding = 10;
 
             var marker = layer.selectAll("svg")
-                  .data(geoData.features)
+                  .data(dataWithRides.features)
                   .each(transform) // update existing markers
                   .enter().append("svg")
                   .each(transform)
@@ -226,10 +228,15 @@ function map(data) {
     };
 
 
-    this.getPushedData = function () {
+    this.getDataWithRides = function () {
 
-        //OPTICS
-        return geoData;
+        return dataWithRides;
+        
+    };
+
+    this.getRidesPerMonth = function () {
+
+        return ridesPerMonth;
         
     };
 
@@ -323,16 +330,18 @@ function map(data) {
     }
 
 
-    function totalCoustumerPerDay(data){
+    function totalCoustumerPerMonth(data){
         var sortedDataByTime = data;
         sortByKey(sortedDataByTime,"date");
         var ridesPerMonthArray = countCustumersPerDay(sortedDataByTime);
 
         return ridesPerMonthArray;
     }
+
     function countCustumersPerDay(data){
 
         var ridesPerMonth = [];
+        var monthObject = [];
        
         for (var n = 0; n < 31; n++) {
             
@@ -344,23 +353,33 @@ function map(data) {
             var endTime = new Date(dateStringEnd);
             
             //reset the rides for current day
-            var ridesPerDay = [];
+            
+            var rides = 0;
 
             data.forEach(function (d ) {
                 var currentDate = new Date(d.date);
                 
                 //find rides for current day
                if(beginTime.getTime() <= currentDate.getTime() &&   endTime.getTime() >= currentDate.getTime()  ){
-                  ridesPerDay.push(d);
+                  rides++;
                }
             });
             
             //add all the rides for current day
-            ridesPerMonth[n] = ridesPerDay;
+            if ((n+1)>9){
+                var objectDateString = "2013-03-"+(n+1)+" 00:00:00";
+            }
+            else{
+                var objectDateString = "2013-03-0"+(n+1)+" 00:00:00";
+            }
+            var objectDate = new Date(objectDateString);
+            monthObject.push({date:  objectDateString, rides: rides});
+            
+            //ridesPerMonth[n] = monthObject;
 
         }
 
-      return ridesPerMonth
+      return monthObject
         
     }   
 

@@ -1,7 +1,14 @@
 //Focus+Context via Brushing
 //http://bl.ocks.org/mbostock/1667367
 
-function area(data) {
+//mData = displayd data when one point is marked
+//aData = displayd data when all point is marked
+
+function area(mData, aData) {
+
+    console.log("mData: ", mData.features[0])
+    console.log("aData: ", aData)
+
     var areaDivSmall = $("#areaSmall");
     var areaDivBig = $("#areaBig");
 
@@ -41,22 +48,22 @@ function area(data) {
     var area = d3.svg.area()
             .interpolate("step")
             .x(function (d) {
-                return x(format(d.properties.time));//Complete the code
+                return x(format(d.date));//Complete the code
             })
             .y0(height)
             .y1(function (d) {
-                return y(d.properties.customers);//Complete the code
+                return y(d.rides);//Complete the code
             });
     
     //Creates the small chart        
     var area2 = d3.svg.area()
             .interpolate("step")
             .x(function (d) {
-                return x2(format(d.properties.time));//Complete the code
+                return x2(format(d.date));//Complete the code
             })
             .y0(height2)
             .y1(function (d) {
-                return y2(d.properties.customers);//Complete the code
+                return y2(d.rides);//Complete the code
             });
     
     //Assings the svg canvas to the area div
@@ -92,8 +99,8 @@ function area(data) {
     // console.log(ridesAndIds[0]);
 
     //Initializes the axis domains for the big chart
-    x.domain(dimensions = d3.extent(data.features.map(function(d) { return format(d.properties.time); })));
-    y.domain(dimensions2 = d3.extent(data.features.map(function(d) { return d.properties.customers; })));
+    x.domain(dimensions = d3.extent(aData.map(function(d) { return format(d.date); })));
+    y.domain(dimensions2 = d3.extent(aData.map(function(d) { return d.rides; })));
     //Initializes the axis domains for the small chart
     x2.domain(x.domain());
     y2.domain(y.domain());
@@ -101,7 +108,7 @@ function area(data) {
     //console.log(data.features)
     //Appends the big chart to the focus area
     focus.append("path")
-            .datum(data.features)
+            .datum(aData)
             .attr("clip-path", "url(#clip)")
             .attr("d", area);
     
@@ -118,7 +125,7 @@ function area(data) {
 
     //Appends the small chart to the focus area        
     context.append("path")
-            .datum(data.features)
+            .datum(aData)
             .attr("d", area2);
     
     //Appends the x axis 
