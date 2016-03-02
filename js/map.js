@@ -118,7 +118,7 @@ function map(data) {
                 var cc = {};
 
                     
-                    console.log(! (typeof self.flightPath == "undefined"))
+                   // console.log(! (typeof self.flightPath == "undefined"))
                     if(! (typeof self.flightPath == "undefined")){removeLine();}
                     
                     //On click highlight the clicked dot by lower the opacity on all others.
@@ -145,7 +145,7 @@ function map(data) {
                     marker.selectAll("circle").style("fill", function (d) { return cc[d.properties.id] });
 
                     var points = area1.lineData(); 
-                    console.log("Points: " + points)
+                   // console.log("Points: " + points)
                     
                     var transformedPoints = [];
 
@@ -156,7 +156,7 @@ function map(data) {
                       
                         transformedPoints.push(coord);
                     })
-                    console.log("Transformedpoints: " + transformedPoints)
+                   // console.log("Transformedpoints: " + transformedPoints)
                   
                     self.flightPath = new google.maps.Polyline({
                                 path: transformedPoints,
@@ -166,19 +166,19 @@ function map(data) {
                                 strokeWeight: 2
                     });
                     addLine();
-                 
+
+                    //console.log(d)
+                    var objs = [];
+                    self.selfData.forEach(function(di,j){
+                        if(di[0].id == d.properties.id)
+                        {   
+                            console.log(di)
+                            //console.log(self.selfData)
+                            main1.update(di);
+                        }
+                    })    
             })  
-
-
-           // d3.selectAll("circle")
-             //   .on("click",  function(d) {
-               //  return filterID(d.properties.id);
-            //});
-
-
         };
-
-        
     };
 
    
@@ -259,34 +259,42 @@ function map(data) {
 
     function calculateDrives(data)
     {   
+       
        var nrSpecificIds =[];
         
        var dataSorted = data;
+
        sortByKey(dataSorted,"id");
        var counter = 0;
        var map = [];
         //create id specific map 
        var count = 0;
-       do{
-            map[counter] = [];
-            var inner = 0;
+       
+       console.log(dataSorted)
+       console.log(data[1].id)
+       try{
 
-            while(data[count].id == dataSorted[count+1].id){
+
+           do{
+                map[counter] = [];
+                var inner = 0;
+
+                while(data[count].id == dataSorted[count+1].id){
+                    map[counter][inner] = dataSorted[count];
+                    count++;
+                    inner++;
+                }
+               
+                nrSpecificIds[counter] = dataSorted[count].id;
                 map[counter][inner] = dataSorted[count];
                 count++;
-                inner++;
+                counter++;
+
             }
-           
-            nrSpecificIds[counter] = dataSorted[count].id;
-            map[counter][inner] = dataSorted[count];
-            count++;
-            counter++;
+            while( !(typeof dataSorted[count+1] == "undefined" ))
+        }catch(err){}
 
-        }
-        while( !(typeof dataSorted[count+1] == "undefined" ))
-        
-
-        console.log(map[0])
+        //console.log(map[0])
 
 
         //map contains an list of arrays

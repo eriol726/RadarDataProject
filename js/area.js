@@ -2,6 +2,7 @@
 //http://bl.ocks.org/mbostock/1667367
 
 function area(data) {
+    
     var areaDivSmall = $("#areaSmall");
     var areaDivBig = $("#areaBig");
 
