@@ -45,7 +45,7 @@ function area(data) {
             })
             .y0(height)
             .y1(function (d) {
-                return y(parseFloat(d.properties.customers));//Complete the code
+                return y(d.properties.customers);//Complete the code
             });
     
     //Creates the small chart        
@@ -56,7 +56,7 @@ function area(data) {
             })
             .y0(height2)
             .y1(function (d) {
-                return y2(parseFloat(d.properties.customers));//Complete the code
+                return y2(d.properties.customers);//Complete the code
             });
     
     //Assings the svg canvas to the area div
@@ -93,7 +93,7 @@ function area(data) {
 
     //Initializes the axis domains for the big chart
     x.domain(dimensions = d3.extent(data.features.map(function(d) { return format(d.properties.time); })));
-    y.domain(dimensions2 = d3.extent(data.features.map(function(d) { return parseFloat(d.properties.customers); })));
+    y.domain(dimensions2 = d3.extent(data.features.map(function(d) { return d.properties.customers; })));
     //Initializes the axis domains for the small chart
     x2.domain(x.domain());
     y2.domain(y.domain());

@@ -4,6 +4,7 @@ function map(data) {
     var self = this;
 
     var ridesAndIds = calculateDrives(data);
+    var customersPerDay = totalCoustumerPerDay(data);
 
     var mapDiv = $("#map");
 
@@ -34,12 +35,14 @@ function map(data) {
       mapTypeId: google.maps.MapTypeId.TERRAIN
     });
 
+    console.log("ridesAndIds", ridesAndIds[1][0].length)
     //Format to geoData
     var geoData = {type: "FeatureCollection", features: geoFormat(data,ridesAndIds)};
     
     function geoFormat(array,ridesAndIds ) {
         var newData = [];
         array.map(function (d, i) {
+            
             newData.push({
                 type: "Feature",
                 geometry: {
@@ -178,9 +181,6 @@ function map(data) {
 
     this.filterTime = function (value) {
         //Complete the code
-       
-        var startTime = value[0].getTime();
-        var endTime = value[1].getTime();
 
 
         d3.selectAll("circle").style("opacity", function(d) {
@@ -246,6 +246,7 @@ function map(data) {
         
        var dataSorted = data;
        sortByKey(dataSorted,"id");
+       
        var counter = 0;
        var map = [];
         //create id specific map 
@@ -267,9 +268,7 @@ function map(data) {
 
         }
         while( !(typeof dataSorted[count+1] == "undefined" ))
-        
-
-        console.log(map[0])
+    
 
 
         //map contains an list of arrays
@@ -321,7 +320,49 @@ function map(data) {
             var x = a[key]; var y = b[key];
             return ((x < y) ? -1 : ((x > y) ? 1 : 0));
         });
-    }    
+    }
+
+
+    function totalCoustumerPerDay(data){
+        var sortedDataByTime = data;
+        sortByKey(sortedDataByTime,"date");
+        var ridesPerMonthArray = countCustumersPerDay(sortedDataByTime);
+
+        return ridesPerMonthArray;
+    }
+    function countCustumersPerDay(data){
+
+        var ridesPerMonth = [];
+       
+        for (var n = 0; n < 31; n++) {
+            
+            // define time interval for current day
+            var dateStringBegin = "2013-03-"+(n+1)+" 00:00:00";
+            var dateStringEnd = "2013-03-"+(n+1)+" 23:59:59";
+
+            var beginTime = new Date(dateStringBegin);
+            var endTime = new Date(dateStringEnd);
+            
+            //reset the rides for current day
+            var ridesPerDay = [];
+
+            data.forEach(function (d ) {
+                var currentDate = new Date(d.date);
+                
+                //find rides for current day
+               if(beginTime.getTime() <= currentDate.getTime() &&   endTime.getTime() >= currentDate.getTime()  ){
+                  ridesPerDay.push(d);
+               }
+            });
+            
+            //add all the rides for current day
+            ridesPerMonth[n] = ridesPerDay;
+
+        }
+
+      return ridesPerMonth
+        
+    }   
 
 
 }
