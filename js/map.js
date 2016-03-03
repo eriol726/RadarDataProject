@@ -8,6 +8,10 @@ function map(data) {
 
     var mapDiv = $("#map");
 
+    var color = ["#FF0000", "#008000"];
+    //var color[0] = "#FF0000";
+    //var color[1] = "#008000";
+
     var margin = {top: 20, right: 20, bottom: 20, left: 20},
         width = mapDiv.width() - margin.right - margin.left,
         height = mapDiv.height() - margin.top - margin.bottom ;
@@ -109,18 +113,29 @@ function map(data) {
                     .style("top", (d.y - padding) + "px");
             }
 
-            //On click highlight the clicked dot by lower the opacity on all others. 
+             
             marker.on("click",  function(d){
+                    
+                var cc = {};
 
+                    
+                    console.log(! (typeof self.flightPath == "undefined"))
+                    if(! (typeof self.flightPath == "undefined")){removeLine();}
+                    
+                    //On click highlight the clicked dot by lower the opacity on all others.
                     marker.selectAll("circle")
-                        .style("opacity", function(mark){
+                        .style("opacity", function(mark, i){
 
-
-                        if(mark.properties.id == d.properties.id) {
                             
+                        if(mark.properties.id == d.properties.id) {
+
+                            if(mark.properties.hired == "t")
+                                cc[d.properties.id] = color[1];
+                            else
+                                cc[d.properties.id] = color[0];
+                          
                             var markedID = 0;
                             self.markedID = d.properties.id;
-                           
 
                             return 1;
                         }
@@ -128,8 +143,11 @@ function map(data) {
                             return 0.1;
                     }) 
                    
-                    
+                    marker.selectAll("circle").style("fill", function (d) { return cc[d.properties.id] });
+
                     var points = area1.lineData(); 
+
+                    console.log("Points: " + points)
 
                     
                     var transformedPoints = [];
@@ -141,16 +159,17 @@ function map(data) {
                       
                         transformedPoints.push(coord);
                     })
-                    console.log(transformedPoints)
+                    console.log("Transformedpoints: " + transformedPoints)
                   
-                    var flightPath = new google.maps.Polyline({
+                    self.flightPath = new google.maps.Polyline({
                                 path: transformedPoints,
                                 geodesic: true,
                                 strokeColor: '#FF0000',
                                 strokeOpacity: 1.0,
                                 strokeWeight: 2
                     });
-                    flightPath.setMap(map);                 
+                    addLine();
+                 
             })  
 
 
@@ -317,6 +336,15 @@ function map(data) {
         return [nrOfRides,nrSpecificIds]
 
 
+    }
+
+
+    function addLine() {
+      self.flightPath.setMap(map);
+    }
+
+    function removeLine() {
+      self.flightPath.setMap(null);
     }
 
     function sortByKey(array, key) {
