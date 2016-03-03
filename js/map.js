@@ -3,17 +3,9 @@ function map(data) {
 
     var self = this;
 
-    var ridesAndIds = calculateDrives(data);
+    var uniqeIdAndRides = calculateDrives(data);
     var ridesPerMonth = totalCoustumerPerMonth(data);
 
-
-
-    console.log("ridesAndIds: ", ridesAndIds[2])
-    console.log("ridesAndIds: ", ridesAndIds[3])
-    console.log("ridesAndIds: ", ridesAndIds[4])
-    console.log("ridesAndIds: ", ridesAndIds[5])
-    console.log("ridesAndIds: ", ridesAndIds[6])
-    console.log("ridesAndIds: ", ridesAndIds[200])
 
     var mapDiv = $("#map");
 
@@ -49,16 +41,20 @@ function map(data) {
     });
 
     //Format to geoData
-    var dataWithRides = {type: "FeatureCollection", features: uniqeIdFormat(data,ridesAndIds)};
+    var dataWithRides = {type: "FeatureCollection", features: uniqeIdFormat(data,uniqeIdAndRides)};
     
+    // create a new object array with an other structor, includeing customers 
     function uniqeIdFormat(array,ridesAndIds ) {
         var newData = [];
         array.map(function (d, i) {
             
-            /*
-            console.log(inventory.find(function findCherries(fruit) { 
-                 return d.id === ridesAndIds[i];
-            }));*/
+            var idIndex =0;
+
+            // find total same ID in uniqeIdAndRides as in Data, take the index and use it to get hiredRides
+            uniqeIdAndRides.forEach( function(Dsmall,n){
+                if(d.id == Dsmall.id )
+                    idIndex = n;
+            });
 
             newData.push({
                 type: "Feature",
@@ -70,15 +66,13 @@ function map(data) {
                 "id" : d.id,
                 "time" : d.date,
                 "hired" : d.hired,
-                "customers": ridesAndIds[0][i]
+                "customers": uniqeIdAndRides[idIndex].hiredRides
                 }
             });
         });
 
         return newData;
     }
-
-    //console.log("data", geoData.features)
 
     var overlay = new google.maps.OverlayView();
 
@@ -296,10 +290,11 @@ function map(data) {
 
         var uniqeIdAndRides =[];
         var hiredRides = 0;
+        var BreakException= {};
 
         // counting hired rides and push total hired rides for each ID into a new array
 
-        var BreakException= {};
+        
         try{
             dataSorted.forEach(function(d,i) {
                 
@@ -315,11 +310,11 @@ function map(data) {
                 }
                 //check last sample in a block
                 else if (dataSorted[i+1].id != dataSorted[i].id){
-                    // if it is a single sampel, count one 
+                    // if it is a uniqe id and hired is true, count one 
                     if(dataSorted[i].hired == 't'  && dataSorted[i-1].id != dataSorted[i].id){
                         hiredRides++;
                     }
-                    uniqeIdAndRides.push({id: d.id, date: d.date, hiredRides:  hiredRides});
+                    uniqeIdAndRides.push({id: d.id, hiredRides:  hiredRides});
                     hiredRides = 0;
                 }
 
@@ -328,78 +323,7 @@ function map(data) {
             if (e!==BreakException) throw e;
         } 
 
-        
-        
-
         return uniqeIdAndRides;
-
-       
-       /*
-       var counter = 0;
-       var map = [];
-        //create id specific map 
-       var count = 0;
-       do{
-            map[counter] = [];
-            var inner = 0;
-
-            while(data[count].id == dataSorted[count+1].id){
-                map[counter][inner] = dataSorted[count];
-                count++;
-                inner++;
-            }
-           
-            nrSpecificIds[counter] = dataSorted[count].id;
-            map[counter][inner] = dataSorted[count];
-            count++;
-            counter++;
-
-        }
-        while( !(typeof dataSorted[count+1] == "undefined" ))
-    
-
-
-        //map contains an list of arrays
-        //where eah array contains an array with
-        //an specific id
-        //
-        // [id 1]              // [id2]
-        //[all objs with id1]  // [all objs with id2]
-        var format = d3.time.format.utc("%Y-%m-%d %H:%M:%S").parse;
-        var data2 = [];
-        var index = 0;
-        map.forEach(function(d,i){
-            var date2 = [];
-            data2[i] = [];
-            var data3 = sortByKey(d,"date")
-            data2[i] = data3;
-        })
-        //same construction as map sorted on time
-        var nrOfRides = [];
-        
-        data2.forEach(function(d,j)
-        {   
-            nrOfRides[j] = 0;
-            d.forEach(function(di,i)
-            {
-                
-                if(i+1 < d.length)
-                {   
-                    
-                    if(d[i].hired == "f" && d[i+1].hired == "t")
-                    {   
-                       // console.log("ff")
-                        nrOfRides[j]++;
-                    }
-                }
-            })
-        })
-        //console.log(data2)
-        //console.log(nrOfRides[5])
-        var selfData = [];
-        self.selfData = data2;
-        return [nrOfRides,nrSpecificIds]*/
-
 
     }
 
@@ -421,14 +345,24 @@ function map(data) {
 
 
     function totalCoustumerPerMonth(data){
-        var sortedDataByTime = data;
-        sortByKey(sortedDataByTime,"date");
-        var ridesPerMonthArray = countCustumersPerDay(sortedDataByTime);
 
-        return ridesPerMonthArray;
-    }
+        //sorting data by date
+        var dataSorted = data;
 
-    function countCustumersPerDay(data){
+       //sort first by id, then by date
+        var s = firstBy(function (v1, v2) { return v1.id < v2.id ? -1 : (v1.id > v2.id ? 1 : 0); })
+                 .thenBy(function (v1, v2) { 
+
+                    var v1Date = new Date(v1.date);
+                    var v2Date = new Date(v2.date);
+
+                    return v1Date.getTime() - v2Date.getTime(); });
+        
+        dataSorted.sort(s);
+
+        var uniqeIdAndRides =[];
+        var BreakException= {};
+        
 
         var ridesPerMonth = [];
         var monthObject = [];
@@ -444,22 +378,43 @@ function map(data) {
             
             //reset the rides for current day
             
-            var rides = 0;
+            var hiredRides = 0;
+            try{
+                dataSorted.forEach(function (d,i ) {
+                    var currentDate = new Date(d.date);
+                    
+                    //find rides for current day
+                    if(beginTime.getTime() <= currentDate.getTime() &&   endTime.getTime() >= currentDate.getTime()  ){
+                           
+                        if(typeof dataSorted[i+1] === "undefined"){
+                            throw BreakException;
+                        } 
+                        //check if next taxi is hired in same block
+                        else if (dataSorted[i+1].id == dataSorted[i].id){
 
-            data.forEach(function (d ) {
-                var currentDate = new Date(d.date);
-                
-                //find rides for current day
-               if(beginTime.getTime() <= currentDate.getTime() &&   endTime.getTime() >= currentDate.getTime()  ){
-                  rides++;
-               }
-            });
+                            if(dataSorted[i].hired == 'f' &&  dataSorted[i+1].hired == 't'){
+                                hiredRides++;
+                            }
+                        }
+                        //check last sample in a block
+                        else if (dataSorted[i+1].id != dataSorted[i].id){
+                            // if it is a uniqe id and hired is true, count one 
+                            if(dataSorted[i].hired == 't'  && dataSorted[i-1].id != dataSorted[i].id){
+                                hiredRides++;
+                            }
+                            hiredRides++;
+                        }
+                    }
+                });
+            }catch(e) {
+                if (e!==BreakException) throw e;
+            } 
             
             //add all the rides for current day
-           var objectDateString = "2013-03-"+(n+1)+" 00:00:00";
+            var objectDateString = "2013-03-"+(n+1)+" 00:00:00";
            
             var objectDate = new Date(objectDateString);
-            monthObject.push({date:  objectDateString, rides: rides});
+            monthObject.push({date:  objectDateString, rides: hiredRides});
             
             //ridesPerMonth[n] = monthObject;
 
@@ -468,7 +423,6 @@ function map(data) {
       return monthObject
         
     }   
-
 
 }
  
