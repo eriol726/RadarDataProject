@@ -1,4 +1,4 @@
-function map(data) {
+function map(data, centroids) {
 
 
     var self = this;
@@ -80,7 +80,7 @@ function map(data) {
                   padding = 10;
 
             var marker = layer.selectAll("svg")
-                  .data(geoData.features)
+                  .data(centroids)
                   .each(transform) // update existing markers
                   .enter().append("svg")
                   .each(transform)
@@ -105,7 +105,7 @@ function map(data) {
               
             //Draw data id's coordinates on google.maps
             function transform(d) {
-                d = new google.maps.LatLng(d.geometry.coordinates[1], d.geometry.coordinates[0]);
+                d = new google.maps.LatLng(d.lat, d.lng);
                 d = projection.fromLatLngToDivPixel(d);
                 return d3.select(this)
                     .style("left", (d.x - padding) + "px")
@@ -156,8 +156,8 @@ function map(data) {
                       
                         transformedPoints.push(coord);
                     })
-                   // console.log("Transformedpoints: " + transformedPoints)
-                  
+                    // console.log("Transformedpoints: " + transformedPoints)
+                    
                     self.flightPath = new google.maps.Polyline({
                                 path: transformedPoints,
                                 geodesic: true,
@@ -270,8 +270,8 @@ function map(data) {
         //create id specific map 
        var count = 0;
        
-       console.log(dataSorted)
-       console.log(data[1].id)
+       //console.log(dataSorted)
+       //console.log(data[1].id)
        try{
 
 
