@@ -6,6 +6,15 @@ function map(data) {
     var ridesAndIds = calculateDrives(data);
     var ridesPerMonth = totalCoustumerPerMonth(data);
 
+
+
+    console.log("ridesAndIds: ", ridesAndIds[2])
+    console.log("ridesAndIds: ", ridesAndIds[3])
+    console.log("ridesAndIds: ", ridesAndIds[4])
+    console.log("ridesAndIds: ", ridesAndIds[5])
+    console.log("ridesAndIds: ", ridesAndIds[6])
+    console.log("ridesAndIds: ", ridesAndIds[200])
+
     var mapDiv = $("#map");
 
     var color = ["#FF0000", "#008000"];
@@ -46,6 +55,11 @@ function map(data) {
         var newData = [];
         array.map(function (d, i) {
             
+            /*
+            console.log(inventory.find(function findCherries(fruit) { 
+                 return d.id === ridesAndIds[i];
+            }));*/
+
             newData.push({
                 type: "Feature",
                 geometry: {
@@ -86,8 +100,6 @@ function map(data) {
                   .enter().append("svg")
                   .each(transform)
                   .attr("class", "marker");
-            
-
 
             // Add a circle.
             marker.append("circle")
@@ -263,13 +275,66 @@ function map(data) {
         elem.innerHTML = "Place: " + value["place"] + " / Depth: " + value["depth"] + " / Magnitude: " + value["mag"] + "&nbsp;";
     }
 
+
+
+
+
     function calculateDrives(data)
-    {   
-       var nrSpecificIds =[];
-        
+    {    
        var dataSorted = data;
-       sortByKey(dataSorted,"id");
+
+       //sort first by id, then by date
+        var s = firstBy(function (v1, v2) { return v1.id < v2.id ? -1 : (v1.id > v2.id ? 1 : 0); })
+                 .thenBy(function (v1, v2) { 
+
+                    var v1Date = new Date(v1.date);
+                    var v2Date = new Date(v2.date);
+
+                    return v1Date.getTime() - v2Date.getTime(); });
+        
+        dataSorted.sort(s);
+
+        var uniqeIdAndRides =[];
+        var hiredRides = 0;
+
+        // counting hired rides and push total hired rides for each ID into a new array
+
+        var BreakException= {};
+        try{
+            dataSorted.forEach(function(d,i) {
+                
+                if(typeof dataSorted[i+1] === "undefined"){
+                    throw BreakException;
+                } 
+                //check if next taxi is hired in same block
+                else if (dataSorted[i+1].id == dataSorted[i].id){
+
+                    if(dataSorted[i].hired == 'f' &&  dataSorted[i+1].hired == 't'){
+                        hiredRides++;
+                    }
+                }
+                //check last sample in a block
+                else if (dataSorted[i+1].id != dataSorted[i].id){
+                    // if it is a single sampel, count one 
+                    if(dataSorted[i].hired == 't'  && dataSorted[i-1].id != dataSorted[i].id){
+                        hiredRides++;
+                    }
+                    uniqeIdAndRides.push({id: d.id, date: d.date, hiredRides:  hiredRides});
+                    hiredRides = 0;
+                }
+
+            });
+        }catch(e) {
+            if (e!==BreakException) throw e;
+        } 
+
+        
+        
+
+        return uniqeIdAndRides;
+
        
+       /*
        var counter = 0;
        var map = [];
         //create id specific map 
@@ -333,7 +398,7 @@ function map(data) {
         //console.log(nrOfRides[5])
         var selfData = [];
         self.selfData = data2;
-        return [nrOfRides,nrSpecificIds]
+        return [nrOfRides,nrSpecificIds]*/
 
 
     }
@@ -391,12 +456,8 @@ function map(data) {
             });
             
             //add all the rides for current day
-            if ((n+1)>9){
-                var objectDateString = "2013-03-"+(n+1)+" 00:00:00";
-            }
-            else{
-                var objectDateString = "2013-03-0"+(n+1)+" 00:00:00";
-            }
+           var objectDateString = "2013-03-"+(n+1)+" 00:00:00";
+           
             var objectDate = new Date(objectDateString);
             monthObject.push({date:  objectDateString, rides: rides});
             
