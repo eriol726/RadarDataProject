@@ -35,7 +35,6 @@ function map(data) {
       mapTypeId: google.maps.MapTypeId.TERRAIN
     });
 
-    console.log("ridesAndIds", ridesAndIds[1][0].length)
     //Format to geoData
     var dataWithRides = {type: "FeatureCollection", features: uniqeIdFormat(data,ridesAndIds)};
     
@@ -61,9 +60,6 @@ function map(data) {
         return newData;
     }
 
-    
- 
-    
     //console.log("data", geoData.features)
 
     var overlay = new google.maps.OverlayView();
@@ -134,7 +130,7 @@ function map(data) {
                    
                     
                     var points = area1.lineData(); 
-                    console.log(points)
+
                     
                     var transformedPoints = [];
 
@@ -182,8 +178,9 @@ function map(data) {
 
 
     this.filterTime = function (value) {
-        //Complete the code
-
+        
+        var startTime = value[0].getTime();
+        var endTime = value[1].getTime();
 
         d3.selectAll("circle").style("opacity", function(d) {
 

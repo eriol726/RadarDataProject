@@ -6,9 +6,6 @@
 
 function area(mData, aData) {
 
-    console.log("mData: ", mData.features[0])
-    console.log("aData: ", aData)
-
     var areaDivSmall = $("#areaSmall");
     var areaDivBig = $("#areaBig");
 
