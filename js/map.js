@@ -1,6 +1,7 @@
 function map(data) {
 
-
+    var markedTaxi = 0;
+    var uniqeTaxiData;
     var self = this;
 
     var uniqeIdAndRides = totalCoustumerFoxTaxi(data);
@@ -41,7 +42,7 @@ function map(data) {
     });
 
     //Format to geoData
-    var dataWithRides = {type: "FeatureCollection", features: uniqeIdFormat(data,uniqeIdAndRides)};
+    var dataWithRides = {type: "FeatureCollection", features: uniqeIdFormat(data)};
     
     // create a new object array with an other structor, includeing customers 
     function uniqeIdFormat(array,ridesAndIds ) {
@@ -51,10 +52,10 @@ function map(data) {
             var idIndex =0;
 
             // find total same ID in uniqeIdAndRides as in Data, take the index and use it to get hiredRides
-            uniqeIdAndRides.forEach( function(Dsmall,n){
-                if(d.id == Dsmall.id )
-                    idIndex = n;
-            });
+            //uniqeIdAndRides.forEach( function(Dsmall,n){
+            //    if(d.id == Dsmall.id )
+            //        idIndex = n;
+            //});
 
             newData.push({
                 type: "Feature",
@@ -66,7 +67,6 @@ function map(data) {
                 "id" : d.id,
                 "time" : d.date,
                 "hired" : d.hired,
-                "customers": uniqeIdAndRides[idIndex].hiredRides
                 }
             });
         });
@@ -124,8 +124,16 @@ function map(data) {
                     
                 var cc = {};
 
+                    var idIndex =0;
+                    uniqeIdAndRides.forEach( function(Dsmall,n){
+                        if(d.properties.id == Dsmall.id )
+                            idIndex = n;
+                    });
+
+                    markedTaxi = 1;
+
+                    self.getData(uniqeIdAndRides[idIndex]);
                     
-                    console.log(! (typeof self.flightPath == "undefined"))
                     if(! (typeof self.flightPath == "undefined")){removeLine();}
                     
                     //On click highlight the clicked dot by lower the opacity on all others.
@@ -150,7 +158,7 @@ function map(data) {
                     }) 
                    
                     marker.selectAll("circle").style("fill", function (d) { return cc[d.properties.id] });
-
+/*
                     var points = area1.lineData(); 
 
                     console.log("Points: " + points)
@@ -174,7 +182,7 @@ function map(data) {
                                 strokeOpacity: 1.0,
                                 strokeWeight: 2
                     });
-                    addLine();
+                    addLine();*/
                  
             })  
 
@@ -250,15 +258,22 @@ function map(data) {
     };
 
 
-    this.getDataWithRides = function () {
+    this.getUniqeTaxi = function () {
 
-        return dataWithRides;
+        return uniqeIdAndRides;
         
     };
 
-    this.getRidesPerMonth = function () {
+    this.getData = function (d) {
 
-        return ridesPerMonth;
+        if(markedTaxi != 0){
+            console.log("marked", uniqeIdAndRides[20]);
+            return uniqeIdAndRides[20];
+        }
+        else{
+            console.log("all");
+            return ridesPerMonth;
+        }
         
     };
 
@@ -291,22 +306,21 @@ function map(data) {
         var uniqeIdAndRides =[];
         var hiredRides = 0;
         var BreakException= {};
+        var month = [];
 
         // counting hired rides and push total hired rides for each ID into a new array
 
             var n = 0;
 
-            try{
-                dataSorted.forEach(function(d,i) {
 
-                    if(typeof dataSorted[i+1] === "undefined"){
-                            throw BreakException;
-                    } 
 
-                    var currentDate = new Date(d.date);
-                    var nextDate= new Date(dataSorted[i+1].date);
+            for(var i = 1; i < dataSorted.length; i++){
+                // check if we are out of bounds
+
+                    var currentDate = new Date(dataSorted[i].date);
+                    var prevDate= new Date(dataSorted[i-1].date);
                     var currentDay = currentDate.getDate();
-                    var nextDay = nextDate.getDate();
+                    var prevDay = prevDate.getDate();
 
                     
                         
@@ -316,48 +330,31 @@ function map(data) {
                     var monthDate = new Date(dateString);
                     
                     
-                    // check if we are out of bounds
 
-                    
-
-                    // this is a block of samples
-                    if(currentDay ==  nextDay && dataSorted[i+1].id == dataSorted[i].id ){
-                
+                    // this is a date block
+                    if(currentDay ==  prevDay && dataSorted[i-1].id == dataSorted[i].id ){
                         
                         //check if next taxi is hired in same block
-                        if (dataSorted[i+1].id == dataSorted[i].id ){
-
-                            if(dataSorted[i].hired == 'f' &&  dataSorted[i+1].hired == 't'){
-                                hiredRides++;
-                            }
-                        }
-                        //check last sample in a block
-                        else if (dataSorted[i+1].id != dataSorted[i].id){
-                            // if it is a uniqe id and hired is true, count one 
-                            if(dataSorted[i].hired == 't'  && dataSorted[i-1].id != dataSorted[i].id){
-                                hiredRides++;
-                            }
-                            // push total hiredRides per day for one id
-                            uniqeIdAndRides.push({id: d.id, date: monthDate, hiredRides:  hiredRides});
-                            hiredRides = 0;
-                        }
-                    }
-                    // this is a singel sample
-                    else{
-                        if(dataSorted[i].hired == 'f'){
-                            uniqeIdAndRides.push({id: d.id, date: monthDate, hiredRides:  hiredRides});
-                        }
-                        else{
+                        if(dataSorted[i].hired == 'f' &&  dataSorted[i+1].hired == 't'){
                             hiredRides++;
-                            uniqeIdAndRides.push({id: d.id, date: monthDate, hiredRides:  hiredRides});
+                        }
+                        
+                    }
+
+                    //check singel block
+                    if(dataSorted[i-1].id != dataSorted[i].id ){
+                        if(dataSorted[i].hired == 't'){
+                            hiredRides++;
                         }
                     }
-                });
-            }catch(e) {
-                if (e!==BreakException) throw e;
-            }
-        
 
+            
+
+            }
+                    
+
+        
+//uniqeIdAndRides.push({id: d[i].id, date: monthDate, rides:  hiredRides});
         return uniqeIdAndRides;
 
     }

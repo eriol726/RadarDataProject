@@ -3,8 +3,11 @@
 
 //mData = displayd data when one point is marked
 //aData = displayd data when all point is marked
+//aData = displayd data when all point is marked
 
-function area(mData, aData) {
+function area(aData) {
+
+    console.log("Data: ", aData);
 
     var areaDivSmall = $("#areaSmall");
     var areaDivBig = $("#areaBig");
