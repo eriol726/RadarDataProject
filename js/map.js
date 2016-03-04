@@ -11,6 +11,8 @@ function map(data) {
     var mapDiv = $("#map");
 
     var color = ["#FF0000", "#008000"];
+    var pickUp = true;
+    var dropOff = true;
     //var color[0] = "#FF0000";
     //var color[1] = "#008000";
 
@@ -36,9 +38,10 @@ function map(data) {
     var g = svg.append("g");
 
     var map = new google.maps.Map(d3.select("#map").node(), {
-      zoom: 8,
-      center: new google.maps.LatLng(59.3333333, 18.05),
-      mapTypeId: google.maps.MapTypeId.TERRAIN
+        zoom: 8,
+        //crollWheel: false,
+        center: new google.maps.LatLng(59.3333333, 18.05),
+        mapTypeId: google.maps.MapTypeId.TERRAIN
     });
 
     //Format to geoData
@@ -118,12 +121,64 @@ function map(data) {
                     .style("left", (d.x - padding) + "px")
                     .style("top", (d.y - padding) + "px");
             }
+            
+            var rr = {};
+            var id;
+            marker.selectAll("circle").style("opacity", function (d, i) {
+                //console.log("-----------------");
+               //console.log("Hired: " + d.properties.hired);
+                //console.log("ID: " + d.properties.id);
 
+                if (id != d.properties.id) {
+                    //console.log("OLIKA ID")
+                    //console.log("ID" + id)
+                    //console.log("DATA ID" + d.properties.id)
+                    pickUp = true;
+                    dropOff = true;
+                }
+
+                //Picks up customer
+                if (d.properties.hired == "t" && pickUp) {
+                    //console.log("FÅR KUND");
+                    rr[d.properties.id] = 1;
+                    id = d.properties.id;
+                    pickUp = false;
+                    return 1;
+                }
+                //Drops off customer
+                else if (d.properties.hired == "f" && dropOff) {
+                    //console.log("SLÄPPER AV KUND");
+                    rr[d.properties.id] = 1;
+                    id = d.properties.id;
+                    pickUp = true;
+                    dropOff = false;
+                    return 1;
+                }
+                //Taxi hired and already picked up customer
+                else if (d.properties.hired == "t" && d.properties.id == id) {
+                    //console.log("HAR KUND");
+                    rr[d.properties.id] = 0.3;
+                    return 0.3;
+                }
+                //Taxi not hired and already drop offed customer
+                else if (d.properties.hired == "f" && d.properties.id == id) {
+                    //console.log("HAR INGEN KUND");
+                    rr[d.properties.id] = 0.3;
+                    return 0.3;
+                }
+                //Incase something slips through
+                else
+                    rr[d.properties.id] = 1;
+                    //console.log("ÖVRIGT")
+                    return 1;
+            })
              
+            
+
             marker.on("click",  function(d){
                     
                 var cc = {};
-
+                console.log("----------------------------")
                     var idIndex =0;
                     uniqeIdAndRides.forEach( function(Dsmall,n){
                         if(d.properties.id == Dsmall.id )
@@ -140,11 +195,14 @@ function map(data) {
                     marker.selectAll("circle")
                         .style("opacity", function(mark, i){
 
-                            
+                          
                         if(mark.properties.id == d.properties.id) {
 
-                            if(mark.properties.hired == "t")
+                            console.log("Marked: " + mark.properties.id);
+
+                            if (mark.properties.hired == "t") {
                                 cc[d.properties.id] = color[1];
+                            }
                             else
                                 cc[d.properties.id] = color[0];
                           
@@ -154,10 +212,19 @@ function map(data) {
                             return 1;
                         }
                         else 
-                            return 0.1;
+                            return 0.3;
                     }) 
                    
                     marker.selectAll("circle").style("fill", function (d) { return cc[d.properties.id] });
+
+                    //updates opacity
+                    marker.selectAll("circle").style("opacity", function (d) {
+                        //console.log("-----------------");
+                        //console.log("Hired: " + d.properties.hired);
+                        //console.log("ID: " + d.properties.id);
+                        //console.log("RR: " + rr[d.properties.id]);
+                        return rr[d.properties.id]
+                    });
 /*
                     var points = area1.lineData(); 
 
