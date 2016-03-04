@@ -1,7 +1,7 @@
-# RadarDataProject
+# Taxi data project
 Project in TNM048
 
-Vizualisation of radar data collectet during March 2013. Flow and speed every minute.
+Vizualisation of taxi data collectet during March 2013. Data representing coordinates and hired/not hired are collected every minute over a month.
 
-~1000 sensores
-~40 million observations
+~1500 cars
+~13 million observations
