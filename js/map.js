@@ -13,8 +13,6 @@ function map(data) {
     var color = ["#FF0000", "#008000"];
     var pickUp = true;
     var dropOff = true;
-    //var color[0] = "#FF0000";
-    //var color[1] = "#008000";
 
     var margin = {top: 20, right: 20, bottom: 20, left: 20},
         width = mapDiv.width() - margin.right - margin.left,
@@ -39,8 +37,12 @@ function map(data) {
 
     var map = new google.maps.Map(d3.select("#map").node(), {
         zoom: 8,
-        //crollWheel: false,
         center: new google.maps.LatLng(59.3333333, 18.05),
+        disableDefaultUI: false,
+        maxZoom: 18,
+        minZoom: 8,
+        streetViewControl: false,
+        rotateControl: false,
         mapTypeId: google.maps.MapTypeId.TERRAIN
     });
 
@@ -178,7 +180,7 @@ function map(data) {
             marker.on("click",  function(d){
                     
                 var cc = {};
-                console.log("----------------------------")
+               
                     var idIndex =0;
                     uniqeIdAndRides.forEach( function(Dsmall,n){
                         if(d.properties.id == Dsmall.id )
@@ -198,7 +200,7 @@ function map(data) {
                           
                         if(mark.properties.id == d.properties.id) {
 
-                            console.log("Marked: " + mark.properties.id);
+                            //console.log("Marked: " + mark.properties.id);
 
                             if (mark.properties.hired == "t") {
                                 cc[d.properties.id] = color[1];
@@ -343,15 +345,6 @@ function map(data) {
         }
         
     };
-
-
-    //Prints features attributes
-    function printInfo(value) {
-        var elem = document.getElementById('info');
-        elem.innerHTML = "Place: " + value["place"] + " / Depth: " + value["depth"] + " / Magnitude: " + value["mag"] + "&nbsp;";
-    }
-
-
 
 
 
