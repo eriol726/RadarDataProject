@@ -7,7 +7,7 @@
 
 function area(aData) {
 
-    console.log("Data: ", aData);
+    
 
     var areaDivSmall = $("#areaSmall");
     var areaDivBig = $("#areaBig");
@@ -25,6 +25,7 @@ function area(aData) {
     //Sets the data format
     var format = d3.time.format.utc("%Y-%m-%d %H:%M:%S").parse;//Complete the code
 
+    console.log("Data: ", format(aData.month[0].date));
     //Sets the scales 
    
     var x = d3.time.scale().range([0, width]),
@@ -48,7 +49,7 @@ function area(aData) {
     var area = d3.svg.area()
             .interpolate("step")
             .x(function (d) {
-                return x(format(d.date));//Complete the code
+                return x( format(d.date));//Complete the code
             })
             .y0(height)
             .y1(function (d) {
@@ -99,8 +100,8 @@ function area(aData) {
     // console.log(ridesAndIds[0]);
 
     //Initializes the axis domains for the big chart
-    x.domain(dimensions = d3.extent(aData.map(function(d) { return format(d.date); })));
-    y.domain(dimensions2 = d3.extent(aData.map(function(d) { return d.rides; })));
+    x.domain(dimensions = d3.extent(aData.month.map(function(d) { return format(d.date); })));
+    y.domain(dimensions2 = d3.extent(aData.month.map(function(d) { return parseFloat(d.rides); })));
     //Initializes the axis domains for the small chart
     x2.domain(x.domain());
     y2.domain(y.domain());
@@ -108,7 +109,7 @@ function area(aData) {
     //console.log(data.features)
     //Appends the big chart to the focus area
     focus.append("path")
-            .datum(aData)
+            .datum(aData.month)
             .attr("clip-path", "url(#clip)")
             .attr("d", area);
     
@@ -125,7 +126,7 @@ function area(aData) {
 
     //Appends the small chart to the focus area        
     context.append("path")
-            .datum(aData)
+            .datum(aData.month)
             .attr("d", area2);
     
     //Appends the x axis 

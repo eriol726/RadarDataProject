@@ -1,11 +1,13 @@
 function map(data) {
 
-    var markedTaxi = 0;
+    var markedTaxi = 1;
     var uniqeTaxiData;
     var self = this;
 
     var uniqeIdAndRides = totalCoustumerFoxTaxi(data);
     var ridesPerMonth = totalCoustumerPerMonth(data);
+
+   // console.log("uniqeIdAndRides: ", uniqeIdAndRides[0]);
 
 
     var mapDiv = $("#map");
@@ -52,7 +54,7 @@ function map(data) {
             var idIndex =0;
 
             // find total same ID in uniqeIdAndRides as in Data, take the index and use it to get hiredRides
-            //uniqeIdAndRides.forEach( function(Dsmall,n){
+            //3uniqeIdAndRides.forEach( function(Dsmall,n){
             //    if(d.id == Dsmall.id )
             //        idIndex = n;
             //});
@@ -227,7 +229,7 @@ function map(data) {
     //Function that filter to only pickups and dropoffs.
     this.filterUpOff = function (value) {
 
-        console.log("SORTED: " + value);
+        //console.log("SORTED: " + value);
         //Sort data by id
         var data = value;
         //data.sort();
@@ -267,8 +269,8 @@ function map(data) {
     this.getData = function (d) {
 
         if(markedTaxi != 0){
-            console.log("marked", uniqeIdAndRides[20]);
-            return uniqeIdAndRides[20];
+           // console.log("marked", uniqeIdAndRides[20]);
+            return uniqeIdAndRides[0];
         }
         else{
             console.log("all");
@@ -299,7 +301,8 @@ function map(data) {
                     var v1Date = new Date(v1.date);
                     var v2Date = new Date(v2.date);
 
-                    return v1Date.getTime() - v2Date.getTime(); });
+                    return v1Date.getTime() - v2Date.getTime(); 
+        });
         
         dataSorted.sort(s);
 
@@ -307,54 +310,96 @@ function map(data) {
         var hiredRides = 0;
         var BreakException= {};
         var month = [];
+        temp = {};
 
         // counting hired rides and push total hired rides for each ID into a new array
 
-            var n = 0;
+        var n = 0;
 
 
-
-            for(var i = 1; i < dataSorted.length; i++){
-                // check if we are out of bounds
-
-                    var currentDate = new Date(dataSorted[i].date);
-                    var prevDate= new Date(dataSorted[i-1].date);
-                    var currentDay = currentDate.getDate();
-                    var prevDay = prevDate.getDate();
-
-                    
-                        
-                    // define time interval for current day
-                    var dateString = "2013-03-"+currentDay+" 00:00:01";
-
-                    var monthDate = new Date(dateString);
-                    
-                    
-
-                    // this is a date block
-                    if(currentDay ==  prevDay && dataSorted[i-1].id == dataSorted[i].id ){
-                        
-                        //check if next taxi is hired in same block
-                        if(dataSorted[i].hired == 'f' &&  dataSorted[i+1].hired == 't'){
-                            hiredRides++;
-                        }
-                        
-                    }
-
-                    //check singel block
-                    if(dataSorted[i-1].id != dataSorted[i].id ){
-                        if(dataSorted[i].hired == 't'){
-                            hiredRides++;
-                        }
-                    }
-
+        var count = 0;
+        for(var i = 1; i < dataSorted.length; i++){
+            // check if we are out of bounds
             
 
-            }
-                    
+            var currentDate = new Date(dataSorted[i].date);
+            var prevDate= new Date(dataSorted[i-1].date);
+            var currentDay = currentDate.getDate();
+            var prevDay = prevDate.getDate();
 
-        
-//uniqeIdAndRides.push({id: d[i].id, date: monthDate, rides:  hiredRides});
+            
+                
+            // define time interval for current day
+            
+            
+            // check absolut first element
+            if (i ==1 && dataSorted[i-1].hired == "t") {
+                 hiredRides++;
+            }
+
+            //check first element in a block, hapends when id changeing
+            if (dataSorted[i-1].id != dataSorted[i].id){
+
+                if(dataSorted[i].hired == 't' ){
+                    hiredRides++;
+                }
+            }
+
+            // this is a date block, hapends when prev id is same as current
+            if(currentDay ==  prevDay && dataSorted[i-1].id == dataSorted[i].id ){
+
+                //check if next taxi is hired in same block
+                if(dataSorted[i].hired == 'f' &&  dataSorted[i+1].hired == 't'){
+                    hiredRides++;
+                }
+                
+            }
+
+
+
+            // push hiredRides for same ID into monthArray when day i changed
+            // dont taka care of singel sampels
+            if(currentDay !=  prevDay && dataSorted[i-1].id == dataSorted[i].id){
+     
+                for(var n = 0; n < 8; n++){
+                     var dateString = "2013-03-"+n+" 00:00:01";
+                    var monthDate = new Date(dateString);
+                    if(n+1 == currentDay){
+                        month[n] = {date: dateString, rides:  hiredRides};
+                    }
+                    else{
+                        month[n] = {date: dateString, rides:  0};
+                    }
+                }
+                // console.log("currentDay: ", prevDay);
+             
+            }
+
+            // push month to uniqeID object array
+            if(dataSorted[i-1].id != dataSorted[i].id){
+                //var temp = new object(); 
+                temp ={id: dataSorted[i].id, month: month};
+                uniqeIdAndRides.push(temp);
+                if(count == 19){
+                    var tja = uniqeIdAndRides[15].month[4].rides;
+                     console.log("tja: ", month[4].rides + " -- "+ tja) 
+                }
+                
+
+                hiredRides=0;
+                count++;
+            }
+            
+            //console.log("utanför: ", uniqeIdAndRides[count].month[4].rides) ;
+            
+
+        }
+
+        uniqeIdAndRides.forEach(function(d){
+            console.log(d.month[4].rides );
+        })
+
+      console.log(uniqeIdAndRides[15].month[4].rides + " -- " + tja);
         return uniqeIdAndRides;
 
     }
