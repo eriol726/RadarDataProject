@@ -3,7 +3,7 @@ function map(data) {
 
     var self = this;
 
-    var uniqeIdAndRides = calculateDrives(data);
+    var uniqeIdAndRides = totalCoustumerFoxTaxi(data);
     var ridesPerMonth = totalCoustumerPerMonth(data);
 
 
@@ -273,7 +273,7 @@ function map(data) {
 
 
 
-    function calculateDrives(data)
+    function totalCoustumerFoxTaxi(data)
     {    
        var dataSorted = data;
 
@@ -294,34 +294,69 @@ function map(data) {
 
         // counting hired rides and push total hired rides for each ID into a new array
 
-        
-        try{
-            dataSorted.forEach(function(d,i) {
+            var n = 0;
+
+            try{
+                dataSorted.forEach(function(d,i) {
+
+                    if(typeof dataSorted[i+1] === "undefined"){
+                            throw BreakException;
+                    } 
+
+                    var currentDate = new Date(d.date);
+                    var nextDate= new Date(dataSorted[i+1].date);
+                    var currentDay = currentDate.getDate();
+                    var nextDay = nextDate.getDate();
+
+                    
+                        
+                    // define time interval for current day
+                    var dateString = "2013-03-"+currentDay+" 00:00:01";
+
+                    var monthDate = new Date(dateString);
+                    
+                    
+                    // check if we are out of bounds
+
+                    
+
+                    // this is a block of samples
+                    if(currentDay ==  nextDay && dataSorted[i+1].id == dataSorted[i].id ){
                 
-                if(typeof dataSorted[i+1] === "undefined"){
-                    throw BreakException;
-                } 
-                //check if next taxi is hired in same block
-                else if (dataSorted[i+1].id == dataSorted[i].id){
+                        
+                        //check if next taxi is hired in same block
+                        if (dataSorted[i+1].id == dataSorted[i].id ){
 
-                    if(dataSorted[i].hired == 'f' &&  dataSorted[i+1].hired == 't'){
-                        hiredRides++;
+                            if(dataSorted[i].hired == 'f' &&  dataSorted[i+1].hired == 't'){
+                                hiredRides++;
+                            }
+                        }
+                        //check last sample in a block
+                        else if (dataSorted[i+1].id != dataSorted[i].id){
+                            // if it is a uniqe id and hired is true, count one 
+                            if(dataSorted[i].hired == 't'  && dataSorted[i-1].id != dataSorted[i].id){
+                                hiredRides++;
+                            }
+                            // push total hiredRides per day for one id
+                            uniqeIdAndRides.push({id: d.id, date: monthDate, hiredRides:  hiredRides});
+                            hiredRides = 0;
+                        }
                     }
-                }
-                //check last sample in a block
-                else if (dataSorted[i+1].id != dataSorted[i].id){
-                    // if it is a uniqe id and hired is true, count one 
-                    if(dataSorted[i].hired == 't'  && dataSorted[i-1].id != dataSorted[i].id){
-                        hiredRides++;
+                    // this is a singel sample
+                    else{
+                        if(dataSorted[i].hired == 'f'){
+                            uniqeIdAndRides.push({id: d.id, date: monthDate, hiredRides:  hiredRides});
+                        }
+                        else{
+                            hiredRides++;
+                            uniqeIdAndRides.push({id: d.id, date: monthDate, hiredRides:  hiredRides});
+                        }
                     }
-                    uniqeIdAndRides.push({id: d.id, hiredRides:  hiredRides});
-                    hiredRides = 0;
-                }
-
-            });
-        }catch(e) {
-            if (e!==BreakException) throw e;
-        } 
+                });
+            }catch(e) {
+                if (e!==BreakException) throw e;
+            }
+        
 
         return uniqeIdAndRides;
 
@@ -391,7 +426,6 @@ function map(data) {
                         } 
                         //check if next taxi is hired in same block
                         else if (dataSorted[i+1].id == dataSorted[i].id){
-
                             if(dataSorted[i].hired == 'f' &&  dataSorted[i+1].hired == 't'){
                                 hiredRides++;
                             }
@@ -402,7 +436,6 @@ function map(data) {
                             if(dataSorted[i].hired == 't'  && dataSorted[i-1].id != dataSorted[i].id){
                                 hiredRides++;
                             }
-                            hiredRides++;
                         }
                     }
                 });
@@ -410,9 +443,8 @@ function map(data) {
                 if (e!==BreakException) throw e;
             } 
             
-            //add all the rides for current day
+            //add all the rides for all taxis for current day
             var objectDateString = "2013-03-"+(n+1)+" 00:00:00";
-           
             var objectDate = new Date(objectDateString);
             monthObject.push({date:  objectDateString, rides: hiredRides});
             
