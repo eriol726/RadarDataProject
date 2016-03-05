@@ -14,7 +14,9 @@ function map(data) {
 
     var mapDiv = $("#map");
 
+    //Red, Green
     var color = ["#FF0000", "#008000"];
+
     var pickUp = true;
     var dropOff = true;
 
@@ -129,6 +131,7 @@ function map(data) {
             }
             
             var rr = {};
+            var upOff = {};
             var id;
             marker.selectAll("circle").style("opacity", function (d, i) {
                 //console.log("-----------------");
@@ -147,6 +150,7 @@ function map(data) {
                 if (d.properties.hired == "t" && pickUp) {
                     //console.log("FÅR KUND");
                     rr[d.properties.id] = 1;
+                    upOff[d.properties.id] = color[1];
                     id = d.properties.id;
                     pickUp = false;
                     return 1;
@@ -155,22 +159,23 @@ function map(data) {
                 else if (d.properties.hired == "f" && dropOff) {
                     //console.log("SLÄPPER AV KUND");
                     rr[d.properties.id] = 1;
+                    upOff[d.properties.id] = color[0];
                     id = d.properties.id;
                     pickUp = true;
                     dropOff = false;
                     return 1;
                 }
                 //Taxi hired and already picked up customer
-                else if (d.properties.hired == "t" && d.properties.id == id) {
+                else if (d.properties.hired == "t" && id == d.properties.id) {
                     //console.log("HAR KUND");
                     rr[d.properties.id] = 0.3;
-                    return 0.3;
+                    return 0;
                 }
-                //Taxi not hired and already drop offed customer
-                else if (d.properties.hired == "f" && d.properties.id == id) {
+                //Taxi not hired and already droped off customer
+                else if (d.properties.hired == "f" && id == d.properties.id) {
                     //console.log("HAR INGEN KUND");
                     rr[d.properties.id] = 0.3;
-                    return 0.3;
+                    return 0;
                 }
                 //Incase something slips through
                 else
@@ -178,84 +183,86 @@ function map(data) {
                     //console.log("ÖVRIGT")
                     return 1;
             })
-             
-            
+
+            //Marks circles red if the drop off a customer and green if the picked up a customer
+            marker.selectAll("circle").style("fill", function (d) { return upOff[d.properties.id] });
 
             marker.on("click",  function(d){
                     
                 var cc = {};
                
-                    var idIndex =0;
-                    uniqeIdAndRides.forEach( function(Dsmall,n){
-                        if(d.properties.id == Dsmall.id )
-                            idIndex = n;
-                    });
+                var idIndex =0;
+                uniqeIdAndRides.forEach( function(Dsmall,n){
+                    if(d.properties.id == Dsmall.id )
+                        idIndex = n;
+                });
 
-                    markedTaxi = 1;
+                markedTaxi = 1;
 
-                    self.getData(uniqeIdAndRides[idIndex]);
+                self.getData(uniqeIdAndRides[idIndex]);
                     
-                    if(! (typeof self.flightPath == "undefined")){removeLine();}
+                if(! (typeof self.flightPath == "undefined")){removeLine();}
                     
-                    //On click highlight the clicked dot by lower the opacity on all others.
-                    marker.selectAll("circle")
-                        .style("opacity", function(mark, i){
+                //On click highlight the clicked dot by lower the opacity on all others.
+                marker.selectAll("circle")
+                    .style("opacity", function(mark, i){
 
                           
-                        if(mark.properties.id == d.properties.id) {
+                    if(mark.properties.id == d.properties.id) {
 
-                            //console.log("Marked: " + mark.properties.id);
+                        //console.log("Marked: " + mark.properties.id);
 
-                            if (mark.properties.hired == "t") {
-                                cc[d.properties.id] = color[1];
-                            }
-                            else
-                                cc[d.properties.id] = color[0];
-                          
-                            var markedID = 0;
-                            self.markedID = d.properties.id;
-
-                            return 1;
+                        if (mark.properties.hired == "t") {
+                            cc[d.properties.id] = color[1];
                         }
-                        else 
-                            return 0.3;
-                    }) 
-                   
-                    marker.selectAll("circle").style("fill", function (d) { return cc[d.properties.id] });
+                        else
+                            cc[d.properties.id] = color[0];
+                          
+                        var markedID = 0;
+                        self.markedID = d.properties.id;
 
-                    //updates opacity
-                    marker.selectAll("circle").style("opacity", function (d) {
-                        //console.log("-----------------");
-                        //console.log("Hired: " + d.properties.hired);
-                        //console.log("ID: " + d.properties.id);
-                        //console.log("RR: " + rr[d.properties.id]);
-                        return rr[d.properties.id]
-                    });
+                        return 1;
+                    }
+                    else 
+                        return 0.1;
+                }) 
+                
+                marker.selectAll("circle").style("fill", function (d) { return upOff[d.properties.id] });
+
+                /* Commented for now. It collides with the opacity change in onclick.
+                //updates opacity
+                marker.selectAll("circle").style("opacity", function (d) {
+                    //console.log("-----------------");
+                    //console.log("Hired: " + d.properties.hired);
+                    //console.log("ID: " + d.properties.id);
+                    //console.log("RR: " + rr[d.properties.id]);
+                    return rr[d.properties.id]
+                });*/
 /*
-                    var points = area1.lineData(); 
+                var points = area1.lineData(); 
 
-                    console.log("Points: " + points)
+                console.log("Points: " + points)
 
                     
-                    var transformedPoints = [];
+                var transformedPoints = [];
 
-                    points.forEach(function(d){
+                points.forEach(function(d){
                         
 
-                        var coord = {lat: d[1], lng: d[0]};
+                    var coord = {lat: d[1], lng: d[0]};
                       
-                        transformedPoints.push(coord);
-                    })
-                    console.log("Transformedpoints: " + transformedPoints)
+                    transformedPoints.push(coord);
+                })
+                console.log("Transformedpoints: " + transformedPoints)
                   
-                    self.flightPath = new google.maps.Polyline({
-                                path: transformedPoints,
-                                geodesic: true,
-                                strokeColor: '#FF0000',
-                                strokeOpacity: 1.0,
-                                strokeWeight: 2
-                    });
-                    addLine();*/
+                self.flightPath = new google.maps.Polyline({
+                            path: transformedPoints,
+                            geodesic: true,
+                            strokeColor: '#FF0000',
+                            strokeOpacity: 1.0,
+                            strokeWeight: 2
+                });
+                addLine();*/
                  
             })  
 
@@ -457,7 +464,7 @@ function map(data) {
 
 
     function addLine() {
-      self.flightPath.setMap(map);
+      self.flightPath.setMap(map);  
     }
 
     function removeLine() {
