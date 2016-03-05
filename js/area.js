@@ -5,14 +5,15 @@
 //aData = displayd data when all point is marked
 //aData = displayd data when all point is marked
 
+
 function area(aData) {
-
+    var self = this;
     
-
+    console.log("aData: ", aData[0]);
     var areaDivSmall = $("#areaSmall");
     var areaDivBig = $("#areaBig");
 
-    var self = this;
+   
 
 
     var margin = {top: 100, right: 40, bottom: 100, left: 40},
@@ -25,7 +26,7 @@ function area(aData) {
     //Sets the data format
     var format = d3.time.format.utc("%Y-%m-%d %H:%M:%S").parse;//Complete the code
 
-    console.log("Data: ", aData[0].month);
+    console.log("Data: ", aData);
     //Sets the scales 
    
     var x = d3.time.scale().range([0, width]),
@@ -156,10 +157,11 @@ function area(aData) {
         //Complete the code
 
 
-
+        console.log("map1: ", map1);
         map1.filterTime(brush.extent());
     }
-    
+
+
 
     this.lineData = function(){
         var lineData = [];
@@ -175,6 +177,11 @@ function area(aData) {
 
     }
 
+    this.update1 = function(data){
+        console.log("update: ", data)
+
+
+    }
 
     
    

@@ -1,4 +1,6 @@
+
 function map(data) {
+   // area2 = new area();
 
     var markedTaxi = 0;
     var uniqeTaxiData;
@@ -199,7 +201,14 @@ function map(data) {
 
                 markedTaxi = 1;
 
-                self.getData(uniqeIdAndRides[idIndex]);
+                var area1 = new area([uniqeIdAndRides[idIndex]]);
+                //console.log("area1 ", area1)
+                //area1.update1(uniqeIdAndRides[idIndex])  
+
+                //self.getData(uniqeIdAndRides[idIndex]);
+                //console.log("markeddata: ", uniqeIdAndRides[idIndex])
+             
+                //are1.getData(uniqeIdAndRides[idIndex]);
                     
                 if(! (typeof self.flightPath == "undefined")){removeLine();}
                     
@@ -226,9 +235,12 @@ function map(data) {
                     else 
                         return 0.1;
                 }) 
-                
-                marker.selectAll("circle").style("fill", function (d) { return upOff[d.properties.id] });
 
+                marker.selectAll("circle").style("fill", function (d) { return upOff[d.properties.id] });
+               
+
+ 
+                          
                 /* Commented for now. It collides with the opacity change in onclick.
                 //updates opacity
                 marker.selectAll("circle").style("opacity", function (d) {
