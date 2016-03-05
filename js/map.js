@@ -52,6 +52,11 @@ function map(data) {
         mapTypeId: google.maps.MapTypeId.TERRAIN
     });
 
+    //Define tooltip div
+    var div = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
     //Format to geoData
     var dataWithRides = {type: "FeatureCollection", features: uniqeIdFormat(data)};
     
@@ -129,7 +134,7 @@ function map(data) {
                     .style("left", (d.x - padding) + "px")
                     .style("top", (d.y - padding) + "px");
             }
-            
+
             var rr = {};
             var upOff = {};
             var id;
@@ -203,6 +208,8 @@ function map(data) {
                     
                 if(! (typeof self.flightPath == "undefined")){removeLine();}
                     
+                var timeUpOff = [];
+                var count = 0;
                 //On click highlight the clicked dot by lower the opacity on all others.
                 marker.selectAll("circle")
                     .style("opacity", function(mark, i){
@@ -210,7 +217,9 @@ function map(data) {
                           
                     if(mark.properties.id == d.properties.id) {
 
-                        //console.log("Marked: " + mark.properties.id);
+                        //Saves the time for all the dots with the same id.
+                        timeUpOff[count] = mark.properties.time;
+                        count++;
 
                         if (mark.properties.hired == "t") {
                             cc[d.properties.id] = color[1];
@@ -263,8 +272,35 @@ function map(data) {
                             strokeWeight: 2
                 });
                 addLine();*/
-                 
-            })  
+
+                //Tooltip ths shows information for the clicked circle
+
+                //if (timeUpOff[timeUpOff.length - 1] == 'index.html') {
+                    
+                //} else {
+                    //something else.
+                //}
+
+                var timeFirst = new Date(timeUpOff[0]);
+                var timeLast = new Date(timeUpOff[Number.parseInt(timeUpOff.length) - 1]);
+
+                var col = cc[d.properties.id];
+
+                div.transition()
+                   .duration(150)
+                   .style("opacity", .9);
+                div.html(
+
+                    //Information box that shows id, and the time for the pick up and drop off
+                    "<p>ID: " + d.properties.id + "</p>" +
+                    "<p>Start: " + timeFirst.getHours() + ":" + timeFirst.getMinutes() + ":" + timeFirst.getSeconds() + "</p>" +
+                    "<div id='dot' style='background:" + col + "' ></div>" + "<div id='dot' style='background:" + col + "' ></div>" + "<div id='dot' style='background:" + col + "' ></div>" +
+                    "<p>End: " + timeLast.getHours() + ":" + timeLast.getMinutes() + ":" + timeLast.getSeconds() + "</p>")
+
+                   .style("left", (d3.event.pageX) + 10 + "px")
+                   .style("top", (d3.event.pageY - 30) + "px");
+
+            })
 
 
            // d3.selectAll("circle")
@@ -274,6 +310,7 @@ function map(data) {
 
 
         };
+           
 
         
     };
