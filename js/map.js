@@ -2,6 +2,7 @@
 function map(data) {
    // area2 = new area();
 
+
     var markedTaxi = 0;
     var uniqeTaxiData;
     var self = this;
@@ -54,6 +55,8 @@ function map(data) {
         mapTypeId: google.maps.MapTypeId.TERRAIN
     });
 
+
+
     //Format to geoData
     var dataWithRides = {type: "FeatureCollection", features: uniqeIdFormat(data)};
     
@@ -86,6 +89,8 @@ function map(data) {
 
         return newData;
     }
+
+    var area1 = new area(TotalRidesPerDay);
 
     var overlay = new google.maps.OverlayView();
 
@@ -201,9 +206,9 @@ function map(data) {
 
                 markedTaxi = 1;
 
-                var area1 = new area([uniqeIdAndRides[idIndex]]);
+              //  var area1 = new area([uniqeIdAndRides[idIndex]]);
                 //console.log("area1 ", area1)
-                //area1.update1(uniqeIdAndRides[idIndex])  
+                area1.update1([uniqeIdAndRides[idIndex]])  
 
                 //self.getData(uniqeIdAndRides[idIndex]);
                 //console.log("markeddata: ", uniqeIdAndRides[idIndex])

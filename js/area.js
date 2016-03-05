@@ -179,6 +179,45 @@ function area(aData) {
 
     this.update1 = function(data){
         console.log("update: ", data)
+        
+         //var svg = d3.select("body").transition();
+        
+        focus.selectAll("path")
+                .datum(data[0].month)
+                .attr("clip-path", "url(#clip)")
+                .attr("d", area);
+        
+        //Appends the x axis 
+        focus.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
+        
+        //Appends the y axis 
+        focus.append("g")
+                .attr("class", "y axis")
+                .call(yAxis);
+
+        //Appends the small chart to the focus area        
+        context.selectAll("path")
+                .datum(data[0].month)
+                .attr("d", area2);
+        
+        //Appends the x axis 
+        context.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height2 + ")")
+                .call(xAxis2);
+
+        //Appends the brush 
+        context.append("g")
+                .attr("class", "x brush")
+                .call(brush)
+                .selectAll("rect")
+                .attr("y", -6)
+                .attr("height", height2 + 7);
+
+
 
 
     }
