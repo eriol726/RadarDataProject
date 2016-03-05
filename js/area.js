@@ -99,13 +99,13 @@ function area(aData) {
             .attr("transform", "translate(" + margin2.left + "," +  margin2.top + ")");
 
     // console.log(ridesAndIds[0]);
-/*
+
     //Initializes the axis domains for the big chart
     x.domain(dimensions = d3.extent(aData[0].month.map(function(d) {  return format(d.date); })));
     y.domain(dimensions2 = d3.extent(aData[0].month.map(function(d) { return parseFloat(d.rides); })));
     //Initializes the axis domains for the small chart
     x2.domain(x.domain());
-    y2.domain(y.domain());*/
+    y2.domain(y.domain());
 
     //console.log(data.features)
     //Appends the big chart to the focus area
@@ -188,48 +188,55 @@ function area(aData) {
     //Initializes the axis domains for the small chart
     x2.domain(x.domain());
     y2.domain(y.domain());
-        
-        focus.selectAll("path")
-                .datum(data[0].month)
-                .attr("clip-path", "url(#clip)")
-                .attr("d", area);
-        
-        //Appends the x axis 
-        focus.select("g")
-                .attr("class", "x axis small")
-                .attr("transform", "translate(0," + 0 + ")")
-                .call(xAxis);
-        console.log(height2)
-        //Appends the y axis 
+    
 
-        //Appends the y axis 
-        focus.select("g")
+    //remove past static in graphs
+    focus.selectAll("path").remove()    
+    focus.select("g")
+            .attr("class", "x axis").remove()
+    focus.select("g")
+            .attr("class", "y axis").remove() 
+    context.selectAll("path").remove()       
+    context.select("g")
+            .attr("class", "x axis").remove()
+
+    focus.append("path")
+            .datum(data[0].month)
+            .attr("clip-path", "url(#clip)")
+            .attr("d", area);
+    
+    // append statics for marked point
+    //Appends the x axis 
+    focus.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis);
+    context.select("g")
+            .attr("class", "x brush").remove()
+    context.selectAll("rect").remove()
+    //Appends the y axis 
+    focus.append("g")
             .attr("class", "y axis")
             .call(yAxis);
 
-        //Appends the small chart to the focus area        
-        context.selectAll("path")
-                .datum(data[0].month)
-                .attr("d", area2);
-        
-        //Appends the x axis 
-        context.select("g")
-                .attr("class", "x axis big")
-                .attr("transform", "translate(0," + 30 + ")")
-                .call(xAxis2);
+    //Appends the small chart to the focus area        
+    context.append("path")
+            .datum(data[0].month)
+            .attr("d", area2);
+    
+    //Appends the x axis 
+    context.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height2 + ")")
+            .call(xAxis2);
 
-
-        //Appends the brush 
-        context.append("g")
-                .attr("class", "x brush")
-                .call(brush)
-                .selectAll("rect")
-                .attr("y", -6)
-                .attr("height", height2 + 7);
-
-
-
-
+    //Appends the brush 
+    context.append("g")
+            .attr("class", "x brush")
+            .call(brush)
+            .selectAll("rect")
+            .attr("y", -6)
+            .attr("height", height2 + 7);
 
 
     }
