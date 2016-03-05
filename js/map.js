@@ -1,5 +1,5 @@
 
-function map(data) {
+function map(data, graphData) {
    // area2 = new area();
 
 
@@ -7,11 +7,13 @@ function map(data) {
     var uniqeTaxiData;
     var self = this;
 
-    var uniqeIdAndRides = totalCoustumerFoxTaxi(data);
-    var TotalRidesPerDay = totalCoustumerPerMonth(data);
+    var uniqeIdAndRides = totalCoustumerForTaxi(graphData);
+    var TotalRidesPerDay = totalCoustumerPerMonth(graphData);
 
 
 
+
+    console.log("uniqeIdAndRides: ", uniqeIdAndRides);
     console.log("ridesPerMonth", TotalRidesPerDay[0])
 
    // console.log("uniqeIdAndRides: ", uniqeIdAndRides[0]);
@@ -57,10 +59,10 @@ function map(data) {
         mapTypeId: google.maps.MapTypeId.TERRAIN
     });
 
-
+    console.log("tja");
 
     //Format to geoData
-    var dataWithRides = {type: "FeatureCollection", features: uniqeIdFormat(data)};
+    var newStructData = {type: "FeatureCollection", features: uniqeIdFormat(data)};
     
     // create a new object array with an other structor, includeing customers 
     function uniqeIdFormat(array,ridesAndIds ) {
@@ -79,12 +81,14 @@ function map(data) {
                 type: "Feature",
                 geometry: {
                     type: 'Point',
-                    coordinates: [d.x_coord, d.y_coord]
+                    coordinates: [d.x_coord, d.y_coord],
+                    numberOfPoints: d.numberOfPoints
+
                 },
                 "properties" : {
-                "id" : d.id,
-                "time" : d.date,
-                "hired" : d.hired,
+                "ids" : d.ids.split(','),
+                "date" : d.date.split(','),
+                "hired" : d.hired.split(',')
                 }
             });
         });
@@ -93,7 +97,7 @@ function map(data) {
     }
 
     var area1 = new area(TotalRidesPerDay);
-    
+
 
     var overlay = new google.maps.OverlayView();
 
@@ -110,7 +114,7 @@ function map(data) {
                   padding = 10;
 
             var marker = layer.selectAll("svg")
-                  .data(dataWithRides.features)
+                  .data(newStructData.features)
                   .each(transform) // update existing markers
                   .enter().append("svg")
                   .each(transform)
@@ -144,11 +148,11 @@ function map(data) {
             var upOff = {};
             var id;
             marker.selectAll("circle").style("opacity", function (d, i) {
-                //console.log("-----------------");
+              //  console.log("-----------------" + d.properties.id);
                //console.log("Hired: " + d.properties.hired);
                 //console.log("ID: " + d.properties.id);
 
-                if (id != d.properties.id) {
+                if (id != d.properties.ids) {
                     //console.log("OLIKA ID")
                     //console.log("ID" + id)
                     //console.log("DATA ID" + d.properties.id)
@@ -169,8 +173,8 @@ function map(data) {
                 else if (d.properties.hired == "f" && dropOff) {
                     //console.log("SLÄPPER AV KUND");
                     rr[d.properties.id] = 1;
-                    upOff[d.properties.id] = color[0];
-                    id = d.properties.id;
+                    upOff[d.properties.ids] = color[0];
+                    id = d.properties.ids;
                     pickUp = true;
                     dropOff = false;
                     return 1;
@@ -202,21 +206,17 @@ function map(data) {
                 var cc = {};
                
                 var idIndex =0;
-                uniqeIdAndRides.forEach( function(Dsmall,n){
-                    if(d.properties.id == Dsmall.id )
+                uniqeIdAndRides.forEach( function(dUnique,n){
+                   if(d.id == dUnique.id )
                         idIndex = n;
+                    console.log("hej")
                 });
 
                 markedTaxi = 1;
 
-              //  var area1 = new area([uniqeIdAndRides[idIndex]]);
-                //console.log("area1 ", area1)
                 area1.update1([uniqeIdAndRides[idIndex]])  
 
-                //self.getData(uniqeIdAndRides[idIndex]);
-                //console.log("markeddata: ", uniqeIdAndRides[idIndex])
-             
-                //are1.getData(uniqeIdAndRides[idIndex]);
+
                     
                 if(! (typeof self.flightPath == "undefined")){removeLine();}
                     
@@ -379,7 +379,7 @@ function map(data) {
 
 
 
-    function totalCoustumerFoxTaxi(data)
+    function totalCoustumerForTaxi(data)
     {    
         var dataSorted = data;
 
@@ -395,10 +395,11 @@ function map(data) {
         
         dataSorted.sort(s);
 
+
         var uniqeIdAndRides =[];
         var hiredRides = 0;
         var BreakException= {};
-        
+        var month = [];
         
 
         // counting hired rides and push total hired rides for each ID into a new array
@@ -417,7 +418,9 @@ function map(data) {
             var prevDay = prevDate.getDate();
 
             
-                
+            if(i+1 == dataSorted.length){
+                break;
+            }
             // define time interval for current day
             
             
@@ -438,7 +441,7 @@ function map(data) {
             if(currentDay ==  prevDay && dataSorted[i-1].id == dataSorted[i].id ){
 
                 //check if next taxi is hired in same block
-                if(dataSorted[i].hired == 'f' &&  dataSorted[i+1].hired == 't'){
+                if(dataSorted[i].hired == 'f' &&  dataSorted[i+1].hired == 't' ){
                     hiredRides++;
                 }
                 
@@ -449,8 +452,8 @@ function map(data) {
             // push hiredRides for same ID into monthArray when day i changed
             // dont taka care of singel sampels
             if(currentDay !=  prevDay && dataSorted[i-1].id == dataSorted[i].id){
-                var month = [];
-                for(var n = 0; n < 8; n++){
+                month = [];
+                for(var n = 0; n < 30; n++){
                      var dateString = "2013-03-"+n+" 00:00:01";
                     var monthDate = new Date(dateString);
                     if(n+1 == currentDay){
@@ -473,11 +476,12 @@ function map(data) {
                 count++;
             }
             
+
+
             //console.log("utanför: ", uniqeIdAndRides[count].month[4].rides) ;
         }
 
 
-    console.log(uniqeIdAndRides[15].month[4].rides );
     return uniqeIdAndRides;
 
     }
@@ -569,7 +573,7 @@ function map(data) {
             var objectDate = new Date(objectDateString);
             monthObject.push({date:  objectDateString, rides: hiredRides});
             
-            
+
             //ridesPerMonth[n] = monthObject;
 
         }
