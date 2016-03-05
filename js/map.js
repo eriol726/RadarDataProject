@@ -10,6 +10,8 @@ function map(data) {
     var uniqeIdAndRides = totalCoustumerFoxTaxi(data);
     var TotalRidesPerDay = totalCoustumerPerMonth(data);
 
+
+
     console.log("ridesPerMonth", TotalRidesPerDay[0])
 
    // console.log("uniqeIdAndRides: ", uniqeIdAndRides[0]);
@@ -91,6 +93,7 @@ function map(data) {
     }
 
     var area1 = new area(TotalRidesPerDay);
+    
 
     var overlay = new google.maps.OverlayView();
 

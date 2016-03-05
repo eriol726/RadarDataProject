@@ -99,13 +99,13 @@ function area(aData) {
             .attr("transform", "translate(" + margin2.left + "," +  margin2.top + ")");
 
     // console.log(ridesAndIds[0]);
-
+/*
     //Initializes the axis domains for the big chart
     x.domain(dimensions = d3.extent(aData[0].month.map(function(d) {  return format(d.date); })));
     y.domain(dimensions2 = d3.extent(aData[0].month.map(function(d) { return parseFloat(d.rides); })));
     //Initializes the axis domains for the small chart
     x2.domain(x.domain());
-    y2.domain(y.domain());
+    y2.domain(y.domain());*/
 
     //console.log(data.features)
     //Appends the big chart to the focus area
@@ -181,6 +181,13 @@ function area(aData) {
         console.log("update: ", data)
         
          //var svg = d3.select("body").transition();
+
+          //Initializes the axis domains for the big chart
+    x.domain(dimensions = d3.extent(data[0].month.map(function(d) {  return format(d.date); })));
+    y.domain(dimensions2 = d3.extent(data[0].month.map(function(d) { return parseFloat(d.rides); })));
+    //Initializes the axis domains for the small chart
+    x2.domain(x.domain());
+    y2.domain(y.domain());
         
         focus.selectAll("path")
                 .datum(data[0].month)
@@ -188,15 +195,17 @@ function area(aData) {
                 .attr("d", area);
         
         //Appends the x axis 
-        focus.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")")
+        focus.select("g")
+                .attr("class", "x axis small")
+                .attr("transform", "translate(0," + 0 + ")")
                 .call(xAxis);
-        
+        console.log(height2)
         //Appends the y axis 
-        focus.append("g")
-                .attr("class", "y axis")
-                .call(yAxis);
+
+        //Appends the y axis 
+        focus.select("g")
+            .attr("class", "y axis")
+            .call(yAxis);
 
         //Appends the small chart to the focus area        
         context.selectAll("path")
@@ -204,10 +213,11 @@ function area(aData) {
                 .attr("d", area2);
         
         //Appends the x axis 
-        context.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + height2 + ")")
+        context.select("g")
+                .attr("class", "x axis big")
+                .attr("transform", "translate(0," + 30 + ")")
                 .call(xAxis2);
+
 
         //Appends the brush 
         context.append("g")
@@ -216,6 +226,8 @@ function area(aData) {
                 .selectAll("rect")
                 .attr("y", -6)
                 .attr("height", height2 + 7);
+
+
 
 
 
