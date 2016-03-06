@@ -242,7 +242,6 @@ function map(data) {
             marker.on("click",  function(d){
 
                 //var id = d.properties.ids.split(",");
-                console.log("CLICK: " + d.properties.hired.length)
                
                 var idIndex =0;
                 uniqeIdAndRides.forEach( function(dUnique,n){
@@ -297,7 +296,7 @@ function map(data) {
                 }) 
 
 
-                console.log(uniqeIdAndRides[idIndex].id)
+  
                 var points = area1.lineData(data, uniqeIdAndRides[idIndex].id); 
                 var transformedPoints = [];
 
@@ -390,18 +389,6 @@ function map(data) {
         
     };
 
-    this.getData = function (d) {
-
-        if(markedTaxi != 0){
-            console.log("marked");
-            return d;
-        }
-        else{
-            console.log("all");
-            return TotalRidesPerDay;
-        }
-        
-    };
 
 
 
@@ -466,7 +453,7 @@ function map(data) {
             // dont taka care of singel sampels
             if(currentDay !=  prevDay && dataSorted[i-1].id == dataSorted[i].id){
                 
-                month = [];
+                 
                 for(var n = 0; n < 31; n++){
 
                      var dateString = "2013-03-"+(n+1)+" 00:00:01";
@@ -487,6 +474,7 @@ function map(data) {
             if(dataSorted[i-1].id != dataSorted[i].id){
               
                 uniqeIdAndRides.push({id: dataSorted[i].id, month: month});
+                month = []
                 hiredRides=0;
             }           
         }
