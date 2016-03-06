@@ -4,6 +4,7 @@ var map1;
 var thenBy1;
 
 d3.csv("data/cities.csv", function (data) {
+
 	
 
 
@@ -15,6 +16,7 @@ d3.csv("data/cities.csv", function (data) {
    // console.log("pusedData: ", pushedData);
 
    //area1 = new area(map1.getData());
+
  	
 
  });

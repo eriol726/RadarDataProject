@@ -163,18 +163,32 @@ function area(aData) {
 
 
 
-    this.lineData = function(){
+    this.lineData = function(data, id){
         var lineData = [];
+        for(var i = 0; i < data.length; i++){
+            
+            var idArray = data[i].ids.split(',');
+            var timeArray = data[i].date.split(',');
+            idArray.forEach(function(d,j){
+                if(id == parseFloat(d)){
+                    lineData.push({x_coord:parseFloat(data[i].x_coord),y_coord: parseFloat(data[i].y_coord), date:timeArray[j]});
+                }
+            })
+            
+        }
+    
+    sortByKey(lineData, "date") 
+    
       
-        map1.selfData.forEach(function(d,j){
-            if(d[0].id == map1.markedID){
-                d.forEach(function(di,i){
-                    lineData.push([parseFloat(di.x_coord), parseFloat(di.y_coord)]);
-                })
-            }
-        })
-        return lineData;
+    return lineData;
 
+    }
+    
+    function sortByKey(array, key) {
+        return array.sort(function(a, b) {
+            var x = a[key]; var y = b[key];
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        });
     }
 
     this.update1 = function(data){
