@@ -13,8 +13,8 @@ function map(data, graphData) {
 
 
 
-    console.log("uniqeIdAndRides: ", uniqeIdAndRides);
-    console.log("ridesPerMonth", TotalRidesPerDay[0])
+    //console.log("uniqeIdAndRides: ", uniqeIdAndRides);
+  //  console.log("ridesPerMonth", TotalRidesPerDay[0])
 
    // console.log("uniqeIdAndRides: ", uniqeIdAndRides[0]);
 
@@ -77,11 +77,7 @@ function map(data, graphData) {
             
             var idIndex =0;
 
-            // find total same ID in uniqeIdAndRides as in Data, take the index and use it to get hiredRides
-            //3uniqeIdAndRides.forEach( function(Dsmall,n){
-            //    if(d.id == Dsmall.id )
-            //        idIndex = n;
-            //});
+        
 
             newData.push({
                 type: "Feature",
@@ -154,21 +150,17 @@ function map(data, graphData) {
             var upOff = {};
             var id;
             marker.selectAll("circle").style("opacity", function (d, i) {
-              //  console.log("-----------------" + d.properties.id);
-               //console.log("Hired: " + d.properties.hired);
-                //console.log("ID: " + d.properties.id);
+           
 
                 if (id != d.properties.ids) {
-                    //console.log("OLIKA ID")
-                    //console.log("ID" + id)
-                    //console.log("DATA ID" + d.properties.id)
+                  
                     pickUp = true;
                     dropOff = true;
                 }
 
                 //Picks up customer
                 if (d.properties.hired == "t" && pickUp) {
-                    //console.log("FÅR KUND");
+                  
                     rr[d.properties.id] = 1;
                     upOff[d.properties.id] = color[1];
                     id = d.properties.id;
@@ -177,7 +169,6 @@ function map(data, graphData) {
                 }
                 //Drops off customer
                 else if (d.properties.hired == "f" && dropOff) {
-                    //console.log("SLÄPPER AV KUND");
                     rr[d.properties.id] = 1;
                     upOff[d.properties.ids] = color[0];
                     id = d.properties.ids;
@@ -187,20 +178,17 @@ function map(data, graphData) {
                 }
                 //Taxi hired and already picked up customer
                 else if (d.properties.hired == "t" && id == d.properties.id) {
-                    //console.log("HAR KUND");
                     rr[d.properties.id] = 0.3;
                     return 0;
                 }
                 //Taxi not hired and already droped off customer
                 else if (d.properties.hired == "f" && id == d.properties.id) {
-                    //console.log("HAR INGEN KUND");
                     rr[d.properties.id] = 0.3;
                     return 0;
                 }
                 //Incase something slips through
                 else
                     rr[d.properties.id] = 1;
-                    //console.log("ÖVRIGT")
                     return 1;
             })
 
@@ -208,22 +196,32 @@ function map(data, graphData) {
             marker.selectAll("circle").style("fill", function (d) { return upOff[d.properties.id] });
 
             marker.on("click",  function(d){
-                    
-                var cc = {};
-               
+                //select id from point 
+                //search for id info 
+                //send id   
+                
                 var idIndex =0;
+                console.log(uniqeIdAndRides.length)
                 uniqeIdAndRides.forEach( function(dUnique,n){
-                   if(d.id == dUnique.id )
-                        idIndex = n;
-                    console.log("hej")
+                    for(var j = 0; j < d.properties.ids.length; j++){
+                        if(dUnique.id == parseFloat(d.properties.ids[j])){
+                            idIndex = n;
+                            console.log(n)
+                            break;
+                        }
+                    }
+
+                  
                 });
 
                 markedTaxi = 1;
-
+                //console.log(uniqeIdAndRides[idIndex.length])
+                
                 area1.update1([uniqeIdAndRides[idIndex]])  
 
 
-                    
+                var cc = {};
+                   
                 if(! (typeof self.flightPath == "undefined")){removeLine();}
                     
                 var timeUpOff = [];
@@ -258,54 +256,14 @@ function map(data, graphData) {
                
 
  
-                          
-                /* Commented for now. It collides with the opacity change in onclick.
-                //updates opacity
-                marker.selectAll("circle").style("opacity", function (d) {
-                    //console.log("-----------------");
-                    //console.log("Hired: " + d.properties.hired);
-                    //console.log("ID: " + d.properties.id);
-                    //console.log("RR: " + rr[d.properties.id]);
-                    return rr[d.properties.id]
-                });*/
-/*
-                var points = area1.lineData(); 
-
-                console.log("Points: " + points)
-
-                    
-                var transformedPoints = [];
-
-                points.forEach(function(d){
-                        
-
-                    var coord = {lat: d[1], lng: d[0]};
-                      
-                    transformedPoints.push(coord);
-                })
-                console.log("Transformedpoints: " + transformedPoints)
-                  
-                self.flightPath = new google.maps.Polyline({
-                            path: transformedPoints,
-                            geodesic: true,
-                            strokeColor: '#FF0000',
-                            strokeOpacity: 1.0,
-                            strokeWeight: 2
-                });
-                addLine();*/
-
-                //Tooltip ths shows information for the clicked circle
-
-                //if (timeUpOff[timeUpOff.length - 1] == 'index.html') {
-                    
-                //} else {
-                    //something else.
-                //}
+              
 
                 var timeFirst = new Date(timeUpOff[0]);
                 var timeLast = new Date(timeUpOff[Number.parseInt(timeUpOff.length) - 1]);
 
                 var col = cc[d.properties.id];
+
+
 
                 div.transition()
                    .duration(150)
@@ -316,12 +274,16 @@ function map(data, graphData) {
                     "<p>ID: " + d.properties.id + "</p>" +
                     "<p>Start: " + timeFirst.getHours() + ":" + timeFirst.getMinutes() + ":" + timeFirst.getSeconds() + "</p>" +
                     "<div id='dot' style='background:" + col + "' ></div>" + "<div id='dot' style='background:" + col + "' ></div>" + "<div id='dot' style='background:" + col + "' ></div>" +
-                    "<p>End: " + timeLast.getHours() + ":" + timeLast.getMinutes() + ":" + timeLast.getSeconds() + "</p>")
+                    "<p>End: " + timeLast.getHours() + ":" + timeLast.getMinutes() + ":" + timeLast.getSeconds() + "</p>"+"<br>"+
+                    "<form>"+ "Choose ID:"+"<input type="+"text"+" name="+"choosenID"+">") 
+
 
                    .style("left", (d3.event.pageX) + 10 + "px")
                    .style("top", (d3.event.pageY - 30) + "px");
 
             })
+              
+           
 
 
            // d3.selectAll("circle")
@@ -365,14 +327,9 @@ function map(data, graphData) {
     //Function that filter to only pickups and dropoffs.
     this.filterUpOff = function (value) {
 
-        //console.log("SORTED: " + value);
-        //Sort data by id
+       
         var data = value;
-        //data.sort();
-
-        //Check if hired
-
-        //Set opacity to 0 for all dots between hired and not hired
+  
     };
 
 
@@ -437,13 +394,12 @@ function map(data, graphData) {
         var uniqeIdAndRides =[];
         var hiredRides = 0;
         var BreakException= {};
-        var month = [];
         
 
         // counting hired rides and push total hired rides for each ID into a new array
 
         var n = 0;
-
+        console.log(dataSorted.length)
 
         var count = 0;
         for(var i = 1; i < dataSorted.length; i++){
@@ -490,9 +446,10 @@ function map(data, graphData) {
             // push hiredRides for same ID into monthArray when day i changed
             // dont taka care of singel sampels
             if(currentDay !=  prevDay && dataSorted[i-1].id == dataSorted[i].id){
-                month = [];
+                var month = [];
+
                 for(var n = 0; n < 30; n++){
-                     var dateString = "2013-03-"+n+" 00:00:01";
+                    var dateString = "2013-03-"+n+" 00:00:01";
                     var monthDate = new Date(dateString);
                     if(n+1 == currentDay){
                         month[n] = {date: dateString, rides:  hiredRides};
@@ -501,22 +458,29 @@ function map(data, graphData) {
                         month[n] = {date: dateString, rides:  0};
                     }
                 }
-                // console.log("currentDay: ", prevDay);
+              
              
             }
-
+           
+           
             // push month to uniqeID object array
             if(dataSorted[i-1].id != dataSorted[i].id){
-
+              
                 uniqeIdAndRides.push({id: dataSorted[i].id, month: month});
 
                 hiredRides=0;
                 count++;
             }
+            else if(dataSorted[i-1].id == dataSorted[i].id)
+            {   
+                var month2 = [];
+                var dateString = "2013-03-"+n+" 00:00:01";
+                for(var n = 0; n < 30; n++){
+                    month2[n] = {date: dateString, rides: 0};
+                }
+                uniqeIdAndRides.push({id: dataSorted[i].id, month: month2});
+            }
             
-
-
-            //console.log("utanför: ", uniqeIdAndRides[count].month[4].rides) ;
         }
 
 

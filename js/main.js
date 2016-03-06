@@ -5,8 +5,8 @@ var thenBy1;
 
 d3.csv("data/cities.csv", function (data) {
 	var graphData = [];
-	for (var i = 0; i<  500; i++) {
 
+	for (var i = 0; i <  data.length; i++) {
 		var id = data[i].ids.split(',');
 		var hired = data[i].hired.split(',');
 		var date = data[i].date.split(',');
@@ -19,10 +19,6 @@ d3.csv("data/cities.csv", function (data) {
 
 
     map1 = new map(data,graphData);
-    //var pushedData = map(data);
-   // console.log("pusedData: ", pushedData);
-
-   //area1 = new area(map1.getData());
  	
 
  });
