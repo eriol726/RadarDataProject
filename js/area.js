@@ -157,7 +157,7 @@ function area(aData) {
         //Complete the code
 
 
-        console.log("map1: ", brush.extent());
+      //  console.log("map1: ", brush.extent());
         map1.filterTime(brush.extent());
     }
 

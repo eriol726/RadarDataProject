@@ -2,8 +2,8 @@ function map(data) {
    // area2 = new area();
 
    // creating a new stucture for the dataset without id, date and hired arrays
-   var graphData = [];
-    for (var i = 0; i<  data.length; i++) {
+    var graphData = [];
+    for (var i = 0; i<  800; i++) {
 
         var id = data[i].ids.split(',');
         var hired = data[i].hired.split(',');
@@ -22,17 +22,16 @@ function map(data) {
     //Set threshold for circle radius depending on number of ids (LARGE, LARGER, LARGEST)
     const LARGE = 500, LARGER = 1500, LARGEST = 15000;
 
-   var dataSorted = graphData;
+    var dataSorted = graphData;
 
-       //sort first by id, then by date
-        var s = firstBy(function (v1, v2) { return v1.id < v2.id ? -1 : (v1.id > v2.id ? 1 : 0); })
-                 .thenBy(function (v1, v2) { 
+    //sort first by id, then by date
+    var s = firstBy(function (v1, v2) { return v1.id < v2.id ? -1 : (v1.id > v2.id ? 1 : 0); })
+             .thenBy(function (v1, v2) { 
 
-                    var v1Date = new Date(v1.date);
-                    var v2Date = new Date(v2.date);
-
-                    return v1Date.getTime() - v2Date.getTime(); 
-        });
+                var v1Date = new Date(v1.date);
+                var v2Date = new Date(v2.date);
+                return v1Date.getTime() - v2Date.getTime(); 
+    });
         
         //dummy month
       
@@ -46,14 +45,11 @@ function map(data) {
     var uniqeIdAndRides = totalCoustumerForTaxi(dataSorted);
 
     var TotalRidesPerDay = totalCoustumerPerMonth(dataSorted);
-    
-   // console.log("uniqeIdAndRides: ", uniqeIdAndRides[0]);
-
 
     var mapDiv = $("#map");
 
     //Red, Green
-    var color = ["#FF0000", "#008000"];
+    var color = ["#f03b20"];
 
     var pickUp = true;
     var dropOff = true;
@@ -138,6 +134,7 @@ function map(data) {
     overlay.onAdd = function() {
         var layer = d3.select(this.getPanes().overlayMouseTarget).append("div")
             .attr("class", "stations");
+        if(! (typeof self.flightPath == "undefined")){removeLine();}
 
 
         // Draw each marker as a separate SVG element.
@@ -189,61 +186,16 @@ function map(data) {
                     return 3;
             })
 
-            var rr = {};
-            var upOff = {};
-            var id;
-            marker.selectAll("circle").style("opacity", function (d, i) {
-           
-
-                if (id != d.properties.ids) {
-                  
-                    pickUp = true;
-                    dropOff = true;
-                }
-
-                //Picks up customer
-                if (d.properties.hired == "t" && pickUp) {
-                  
-                    rr[d.properties.id] = 1;
-                    upOff[d.properties.id] = color[1];
-                    id = d.properties.id;
-                    pickUp = false;
-                    return 1;
-                }
-                //Drops off customer
-                else if (d.properties.hired == "f" && dropOff) {
-                    rr[d.properties.id] = 1;
-                    upOff[d.properties.ids] = color[0];
-                    id = d.properties.ids;
-                    pickUp = true;
-                    dropOff = false;
-                    return 1;
-                }
-                //Taxi hired and already picked up customer
-                else if (d.properties.hired == "t" && id == d.properties.id) {
-                    rr[d.properties.id] = 0.3;
-                    return 0;
-                }
-                //Taxi not hired and already droped off customer
-                else if (d.properties.hired == "f" && id == d.properties.id) {
-                    rr[d.properties.id] = 0.3;
-                    return 0;
-                }
-                //Incase something slips through
-                else
-                    rr[d.properties.id] = 1;
-                    return 1;
-            })
+      
 
             //Marks circles red if the drop off a customer and green if the picked up a customer
-            marker.selectAll("circle").style("fill", function (d) { return upOff[d.properties.id] });
 
             marker.on("click",  function(d){
+            if(! (typeof self.flightPath == "undefined")){removeLine();}
 
                 //var id = d.properties.ids.split(",");
-                console.log("CLICK: " + d.properties.hired.length)
                
-                var idIndex =0;
+                var idIndex = 0;
                 uniqeIdAndRides.forEach( function(dUnique,n){
                    if(d.properties.ids[0] == dUnique.id )
                         idIndex = n;
@@ -251,52 +203,13 @@ function map(data) {
                 });
 
 
-                //select id from point 
-                //search for id info 
-                //send id   
-                
-              //  var idIndex =50;
+              
               
                 markedTaxi = 1;
-                //console.log(uniqeIdAndRides[idIndex.length])
                 
                 area1.update1([uniqeIdAndRides[idIndex]])  
+        
 
-
-                var cc = {};
-                   
-                if(! (typeof self.flightPath == "undefined")){removeLine();}
-                    
-                var timeUpOff = [];
-                var count = 0;
-                //On click highlight the clicked dot by lower the opacity on all others.
-                marker.selectAll("circle")
-                    .style("opacity", function(mark, i){
-
-                          
-                    if(mark.properties.id == d.properties.id) {
-
-                        //Saves the time for all the dots with the same id.
-                        timeUpOff[count] = mark.properties.time;
-                        count++;
-
-                        if (mark.properties.hired == "t") {
-                            cc[d.properties.id] = color[1];
-                        }
-                        else
-                            cc[d.properties.id] = color[0];
-                          
-                        var markedID = 0;
-                        self.markedID = d.properties.id;
-
-                        return 1;
-                    }
-                    else 
-                        return 0.1;
-                }) 
-
-
-                console.log(uniqeIdAndRides[idIndex].id)
                 var points = area1.lineData(data, uniqeIdAndRides[idIndex].id); 
                 var transformedPoints = [];
 
@@ -309,10 +222,23 @@ function map(data) {
                 self.flightPath = new google.maps.Polyline({
                             path: transformedPoints,
                             geodesic: true,
-                            strokeColor: '#FF0000',
+                            strokeColor: '#f03b20',
                             strokeOpacity: 1.0,
                             strokeWeight: 2
                 });
+
+
+                marker.selectAll("circle")
+                      .style("opacity", function (di) {
+                        var contains = false;
+                        for(var i = 0; i < di.properties.ids.length; i++){
+                            if(parseFloat(di.properties.ids[i]) == uniqeIdAndRides[idIndex].id){
+                                return 0.5;
+                            }
+                        }                          
+                        return 0.2;
+                    
+             })
                 addLine();
  
 
@@ -339,11 +265,11 @@ function map(data) {
 
 
     this.filterTime = function (value) {
-        
+        if(! (typeof self.flightPath == "undefined")){removeLine();}
         var startTime = value[0].getTime();
         var endTime = value[1].getTime();
 
-        console.log("startTime", value[0])
+     //   console.log("startTime", value[0])
 
         d3.selectAll("circle").style("opacity", function(d) {
 
@@ -493,13 +419,6 @@ function map(data) {
     return uniqeIdAndRides;
 
     }
-
-
-
-
-
-
-
 
 
 
