@@ -4,7 +4,7 @@ function map(data) {
 
    // creating a new stucture for the dataset without id, date and hired arrays
    var graphData = [];
-    for (var i = 0; i<  data.length; i++) {
+    for (var i = 0; i<  700; i++) {
 
         var id = data[i].ids.split(',');
         var hired = data[i].hired.split(',');
@@ -240,9 +240,9 @@ function map(data) {
                
                 var idIndex =0;
                 uniqeIdAndRides.forEach( function(dUnique,n){
-                   if(d.id == dUnique.id )
+                   if(d.properties.ids[0] == dUnique.id )
                         idIndex = n;
-                    console.log("hej")
+                   // console.log("hej", d.properties.ids[0]+ " --- " +dUnique.id)
                 });
 
                 markedTaxi = 1;
@@ -282,52 +282,6 @@ function map(data) {
                 }) 
 
                 marker.selectAll("circle").style("fill", function (d) { return upOff[d.properties.id] });
-               
-
- 
-                          
-                /* Commented for now. It collides with the opacity change in onclick.
-                //updates opacity
-                marker.selectAll("circle").style("opacity", function (d) {
-                    //console.log("-----------------");
-                    //console.log("Hired: " + d.properties.hired);
-                    //console.log("ID: " + d.properties.id);
-                    //console.log("RR: " + rr[d.properties.id]);
-                    return rr[d.properties.id]
-                });*/
-/*
-                var points = area1.lineData(); 
-
-                console.log("Points: " + points)
-
-                    
-                var transformedPoints = [];
-
-                points.forEach(function(d){
-                        
-
-                    var coord = {lat: d[1], lng: d[0]};
-                      
-                    transformedPoints.push(coord);
-                })
-                console.log("Transformedpoints: " + transformedPoints)
-                  
-                self.flightPath = new google.maps.Polyline({
-                            path: transformedPoints,
-                            geodesic: true,
-                            strokeColor: '#FF0000',
-                            strokeOpacity: 1.0,
-                            strokeWeight: 2
-                });
-                addLine();*/
-
-                //Tooltip ths shows information for the clicked circle
-
-                //if (timeUpOff[timeUpOff.length - 1] == 'index.html') {
-                    
-                //} else {
-                    //something else.
-                //}
 
                 var timeFirst = new Date(timeUpOff[0]);
                 var timeLast = new Date(timeUpOff[Number.parseInt(timeUpOff.length) - 1]);
@@ -516,11 +470,11 @@ function map(data) {
 
 
 
-            // push hiredRides for same ID into monthArray when day i changed
+            // push hiredRides for same ID into monthArray when day i is changed
             // dont taka care of singel sampels
             if(currentDay !=  prevDay && dataSorted[i-1].id == dataSorted[i].id){
                 month = [];
-                for(var n = 0; n < 30; n++){
+                for(var n = 0; n < 31; n++){
                      var dateString = "2013-03-"+n+" 00:00:01";
                     var monthDate = new Date(dateString);
                     if(n+1 == currentDay){
