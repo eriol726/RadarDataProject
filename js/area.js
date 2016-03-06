@@ -9,7 +9,7 @@
 function area(aData) {
     var self = this;
     
-    console.log("aData: ", aData[0]);
+   // console.log("aData: ", aData[0]);
     var areaDivSmall = $("#areaSmall");
     var areaDivBig = $("#areaBig");
 
@@ -26,7 +26,7 @@ function area(aData) {
     //Sets the data format
     var format = d3.time.format.utc("%Y-%m-%d %H:%M:%S").parse;//Complete the code
 
-    console.log("Data: ", aData);
+   // console.log("Data: ", aData);
     //Sets the scales 
    
     var x = d3.time.scale().range([0, width]),
@@ -192,7 +192,7 @@ function area(aData) {
     }
 
     this.update1 = function(data){
-        console.log("update: ", data)
+      //  console.log("update: ", data)
         
          //var svg = d3.select("body").transition();
 

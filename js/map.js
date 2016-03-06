@@ -3,7 +3,7 @@ function map(data) {
 
    // creating a new stucture for the dataset without id, date and hired arrays
     var graphData = [];
-    for (var i = 0; i<  800; i++) {
+    for (var i = 0; i < data.length; i++) {
 
         var id = data[i].ids.split(',');
         var hired = data[i].hired.split(',');
@@ -269,14 +269,21 @@ function map(data) {
         var startTime = value[0].getTime();
         var endTime = value[1].getTime();
 
-     //   console.log("startTime", value[0])
+        //console.log("startTime", value[0])
 
         d3.selectAll("circle").style("opacity", function(d) {
 
-            var time = new Date(d.properties.date);
-          
-         return (startTime <= time.getTime() && time.getTime() <= endTime) ? 1 : 0;
-        });
+            
+        for (var i = 0; i < d.properties.date.length; i++){
+            var time = new Date(d.properties.date[i]);
+
+            if(startTime <= time.getTime() && time.getTime() <= endTime){
+                return 1;
+            }           
+        }
+        return 0;
+        
+      });
             
     };
 
@@ -290,17 +297,6 @@ function map(data) {
 
 
 
-    /*Call a given datamining algorithm
-    -----------------------------------------------------------------
-    Density based clustering algorithms
-    - Density-based spatial clustering of applications with noise (DBSCAN)
-    - Ordering points to identify the clustering structure (OPTICS)
-
-    Tree classifier
-    - CART (binary tree, find patterns in hire)
-
-    Screen Space Quality Method
-    */
     this.cluster = function () {
 
         //OPTICS
@@ -315,21 +311,7 @@ function map(data) {
         
     };
 
-    this.getData = function (d) {
-
-        if(markedTaxi != 0){
-            console.log("marked");
-            return d;
-        }
-        else{
-            console.log("all");
-            return TotalRidesPerDay;
-        }
-        
-    };
-
-
-
+ 
     function totalCoustumerForTaxi(data)
     {    
         
