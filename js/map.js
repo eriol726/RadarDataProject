@@ -4,7 +4,6 @@ function map(data) {
     //Set threshold for circle radius depending on number of ids (LARGE, LARGER, LARGEST)
     const LARGE = 500, LARGER = 1500, LARGEST = 15000;
 
-  
 
     var graphData = prepareGraphData(data);
 
@@ -16,7 +15,7 @@ function map(data) {
      //creating a new data structure for map data
     var newStructData = {type: "FeatureCollection", features: mapData(data)};
     
-    // create a new object array with an other structor, includeing customers 
+    // create a new object array with an other structor 
     function mapData(array,ridesAndIds ) {
         var newData = [];
         array.map(function (d, i) {
@@ -158,8 +157,10 @@ function map(data) {
 
                 //find index for marked point
                 uniqeIdAndRides.forEach( function(dUnique,n){
-                    if(d.properties.ids[0] == dUnique.id )
+                    if(d.properties.ids[0] == dUnique.id ){
+                        console.log(dUnique.id);
                         idIndex = n;
+                    }
                 });
 
                 if(idIndex == 0){
@@ -295,7 +296,7 @@ function map(data) {
         var hiredRides = 0;
         var BreakException= {};
 
-        var month = [];
+        var month = creatMonthArray();
 
         for(var i = 1; i < graphData.length; i++){
             // check if we are out of bounds
@@ -335,19 +336,12 @@ function map(data) {
             // push hiredRides for same ID into monthArray when day i is changed
             // dont taka care of singel sampels
             if(currentDay !=  prevDay && graphData[i-1].id == graphData[i].id){
-                
+                //console.log("currentDay: ", currentDay)
                 for(var n = 0; n < 31; n++){
-                    // define time for current day
-                     var dateString = "2013-03-"+(n+1)+" 00:00:01";
-
-                    var monthDate = new Date(dateString);
                     if(n+1 == currentDay){
-                        month[n] = {date: dateString, rides:  hiredRides};
+                        month[n].rides = hiredRides ;
                     }
-                    else{
 
-                        month[n] = {date: dateString, rides:  0};
-                    }
                 }
                 
             }
@@ -355,7 +349,7 @@ function map(data) {
             if(graphData[i-1].id != graphData[i].id){
               
                 uniqeIdAndRides.push({id: graphData[i].id, month: month});
-                month = []
+                month = creatMonthArray();
                 hiredRides=0;
             }           
         }
@@ -422,6 +416,7 @@ function map(data) {
             monthObject.push({date:  objectDateString, rides: hiredRides});
 
         }
+        // must do this for being able to call d.month in area()
         totalIds.push({id: 1, month: monthObject});
 
       return totalIds
@@ -432,7 +427,7 @@ function map(data) {
          // creating a new stucture for the dataset without id, date and hired arrays
         var graphData = [];
 
-        for (var i = 0; i<  700; i++) {
+        for (var i = 0; i<  1000; i++) {
 
 
             var id = data[i].ids.split(',');
@@ -457,6 +452,16 @@ function map(data) {
         graphData.sort(s);
 
         return graphData;
+    }
+
+    function creatMonthArray(){
+        month = [];
+         for(var n = 0; n < 31; n++){    
+            var dateString = "2013-03-"+(n+1)+" 00:00:01"; 
+            month[n] =  {date: dateString, rides:  0};
+        }
+
+        return month;
     }
 
 }
