@@ -1,9 +1,12 @@
 
 function map(data) {
-   // area2 = new area();
+    var self = this;
+
+    //Set threshold for circle radius depending on number of ids (LARGE, LARGER, LARGEST)
+    const LARGE = 500, LARGER = 1500, LARGEST = 15000;
 
    // creating a new stucture for the dataset without id, date and hired arrays
-   var graphData = [];
+    var graphData = [];
     for (var i = 0; i<  700; i++) {
 
         var id = data[i].ids.split(',');
@@ -14,42 +17,32 @@ function map(data) {
             graphData.push({date: date[n], id:parseFloat(id[n]) , hired:hired[n]});
         }
     }
-
-
-    var markedTaxi = 0;
-    var uniqeTaxiData;
-    var self = this;
     
-    //Set threshold for circle radius depending on number of ids (LARGE, LARGER, LARGEST)
-    const LARGE = 500, LARGER = 1500, LARGEST = 15000;
 
-   var dataSorted = graphData;
+    var dataSorted = graphData;
 
-       //sort first by id, then by date
-        var s = firstBy(function (v1, v2) { return v1.id < v2.id ? -1 : (v1.id > v2.id ? 1 : 0); })
-                 .thenBy(function (v1, v2) { 
+   //sort first by id, then by date
+    var s = firstBy(function (v1, v2) { return v1.id < v2.id ? -1 : (v1.id > v2.id ? 1 : 0); })
+            .thenBy(function (v1, v2) { 
 
-                    var v1Date = new Date(v1.date);
-                    var v2Date = new Date(v2.date);
+            var v1Date = new Date(v1.date);
+            var v2Date = new Date(v2.date);
 
-                    return v1Date.getTime() - v2Date.getTime(); 
-        });
+            return v1Date.getTime() - v2Date.getTime(); 
+    });
+
+    console.log(dataSorted);
         
-        //dummy month
-      
     dataSorted.sort(s);
 
-
-    var markedTaxi = 0;
-    var uniqeTaxiData;
-    var self = this;
 
     var uniqeIdAndRides = totalCoustumerForTaxi(dataSorted);
 
     var TotalRidesPerDay = totalCoustumerPerMonth(dataSorted);
-    
-   // console.log("uniqeIdAndRides: ", uniqeIdAndRides[0]);
 
+    console.log(uniqeIdAndRides);
+
+    
 
     var mapDiv = $("#map");
 
@@ -97,8 +90,6 @@ function map(data) {
     .attr("class", "tooltip")
     .style("opacity", 0);
 
-
-
     //Format to newStructData
     var newStructData = {type: "FeatureCollection", features: uniqeIdFormat(data)};
     
@@ -108,8 +99,6 @@ function map(data) {
         array.map(function (d, i) {
             
             var idIndex =0;
-
-        
 
             newData.push({
                 type: "Feature",
@@ -242,24 +231,21 @@ function map(data) {
             marker.on("click",  function(d){
 
                 //var id = d.properties.ids.split(",");
-               
-                var idIndex =0;
+                var idIndex = 0;
+                console.log("d.properties.ids: ", d.properties.ids);
                 uniqeIdAndRides.forEach( function(dUnique,n){
-                   if(d.properties.ids[0] == dUnique.id )
+                    if(d.properties.ids[0] == dUnique.id )
                         idIndex = n;
-                   // console.log("hej", d.properties.ids[0]+ " --- " +dUnique.id)
+                    else{
+                        console.log("index is zero ", d.properties.ids[0]);
+                    }
                 });
 
 
                 //select id from point 
                 //search for id info 
                 //send id   
-                
-              //  var idIndex =50;
-              
-                markedTaxi = 1;
-                //console.log(uniqeIdAndRides[idIndex.length])
-                
+                console.log("idIndex", idIndex);
                 area1.update1([uniqeIdAndRides[idIndex]])  
 
 
@@ -295,8 +281,6 @@ function map(data) {
                         return 0.1;
                 }) 
 
-
-  
                 var points = area1.lineData(data, uniqeIdAndRides[idIndex].id); 
                 var transformedPoints = [];
 
@@ -315,15 +299,8 @@ function map(data) {
                 });
                 addLine();
  
-
             })
-              
-
-
         };
-           
-
-        
     };
 
    
@@ -357,50 +334,26 @@ function map(data) {
     //Function that filter to only pickups and dropoffs.
     this.filterUpOff = function (value) {
 
-       
         var data = value;
   
     };
 
 
+    function addLine() {
+      self.flightPath.setMap(map);  
+    }
 
-    /*Call a given datamining algorithm
-    -----------------------------------------------------------------
-    Density based clustering algorithms
-    - Density-based spatial clustering of applications with noise (DBSCAN)
-    - Ordering points to identify the clustering structure (OPTICS)
+    function removeLine() {
+      self.flightPath.setMap(null);
+    }
 
-    Tree classifier
-    - CART (binary tree, find patterns in hire)
-
-    Screen Space Quality Method
-    */
-    this.cluster = function () {
-
-        //OPTICS
-        opticsArray = optics(data, distRad, minPts);
-        
-    };
-
-
-    this.getUniqeTaxi = function () {
-
-        return uniqeIdAndRides;
-        
-    };
-
-
-
-
+    // pushing in hired rides for each taxi into an object array 
     function totalCoustumerForTaxi(data)
     {    
-        
-
 
         var uniqeIdAndRides =[];
         var hiredRides = 0;
         var BreakException= {};
-        
 
         // counting hired rides and push total hired rides for each ID into a new array
 
@@ -419,10 +372,6 @@ function map(data) {
             var currentDay = currentDate.getDate();
             var prevDay = prevDate.getDate();
 
-            
-           
-            // define time interval for current day
-            
             
             // check absolut first element
             if (i ==1 && dataSorted[i-1].hired == "t") {
@@ -447,17 +396,13 @@ function map(data) {
                 
             }
 
-
-
             // push hiredRides for same ID into monthArray when day i is changed
             // dont taka care of singel sampels
             if(currentDay !=  prevDay && dataSorted[i-1].id == dataSorted[i].id){
                 
-                 
                 for(var n = 0; n < 31; n++){
-
+                    // define time for current day
                      var dateString = "2013-03-"+(n+1)+" 00:00:01";
-
 
                     var monthDate = new Date(dateString);
                     if(n+1 == currentDay){
@@ -483,35 +428,8 @@ function map(data) {
 
     }
 
-
-
-
-
-
-
-
-
-
-
-    function addLine() {
-      self.flightPath.setMap(map);  
-    }
-
-    function removeLine() {
-      self.flightPath.setMap(null);
-    }
-
-    function sortByKey(array, key) {
-        return array.sort(function(a, b) {
-            var x = a[key]; var y = b[key];
-            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-        });
-    }
-
-
+     // pushing in total hired rides for all taxis into an object array
     function totalCoustumerPerMonth(data){
-
-        
 
         var uniqeIdAndRides =[];
         var BreakException= {};
@@ -566,9 +484,6 @@ function map(data) {
             var objectDateString = "2013-03-"+(n+1)+" 00:00:00";
             var objectDate = new Date(objectDateString);
             monthObject.push({date:  objectDateString, rides: hiredRides});
-            
-
-            //ridesPerMonth[n] = monthObject;
 
         }
         totalIds.push({id: 1, month: monthObject});

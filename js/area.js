@@ -26,7 +26,6 @@ function area(aData) {
     //Sets the data format
     var format = d3.time.format.utc("%Y-%m-%d %H:%M:%S").parse;//Complete the code
 
-    console.log("Data: ", aData);
     //Sets the scales 
    
     var x = d3.time.scale().range([0, width]),
@@ -192,11 +191,11 @@ function area(aData) {
     }
 
     this.update1 = function(data){
-        console.log("update: ", data)
+
         
          //var svg = d3.select("body").transition();
 
-          //Initializes the axis domains for the big chart
+    //Initializes the axis domains for the big chart
     x.domain(dimensions = d3.extent(data[0].month.map(function(d) {  return format(d.date); })));
     y.domain(dimensions2 = d3.extent(data[0].month.map(function(d) { return parseFloat(d.rides); })));
     //Initializes the axis domains for the small chart
