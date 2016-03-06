@@ -475,13 +475,13 @@ function map(data) {
             if(currentDay !=  prevDay && dataSorted[i-1].id == dataSorted[i].id){
                 month = [];
                 for(var n = 0; n < 31; n++){
-                     var dateString = "2013-03-"+n+" 00:00:01";
+                     var dateString = "2013-03-"+(n+1)+" 00:00:01";
                     var monthDate = new Date(dateString);
                     if(n+1 == currentDay){
                         month[n] = {date: dateString, rides:  hiredRides};
                     }
                     else{
-                        month[n] = {date: dateString, rides:  0};
+                        month[n] = {date: dateString, rides:  5};
                     }
                 }
                 // console.log("currentDay: ", prevDay);
