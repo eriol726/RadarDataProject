@@ -1,10 +1,9 @@
-
 function map(data) {
    // area2 = new area();
 
    // creating a new stucture for the dataset without id, date and hired arrays
    var graphData = [];
-    for (var i = 0; i<  700; i++) {
+    for (var i = 0; i<  data.length; i++) {
 
         var id = data[i].ids.split(',');
         var hired = data[i].hired.split(',');
