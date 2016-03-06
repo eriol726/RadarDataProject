@@ -8,7 +8,7 @@ d3.csv("data/cities.csv", function (data) {
 
 
 
-
+    
 
     map1 = new map(data);
     //var pushedData = map(data);

@@ -19,12 +19,12 @@ function map(data) {
     var markedTaxi = 0;
     var uniqeTaxiData;
     var self = this;
+    
+    //Set threshold for circle radius depending on number of ids (LARGE, LARGER, LARGEST)
+    const LARGE = 500, LARGER = 1500, LARGEST = 15000;
 
     var uniqeIdAndRides = totalCoustumerForTaxi(graphData);
     var TotalRidesPerDay = totalCoustumerPerMonth(graphData);
-
-
-
 
     console.log("uniqeIdAndRides: ", uniqeIdAndRides);
     console.log("ridesPerMonth", TotalRidesPerDay[0])
@@ -66,7 +66,7 @@ function map(data) {
         center: new google.maps.LatLng(59.3333333, 18.05),
         disableDefaultUI: false,
         maxZoom: 18,
-        minZoom: 8,
+        minZoom: 7,
         streetViewControl: false,
         rotateControl: false,
         mapTypeId: google.maps.MapTypeId.TERRAIN
@@ -163,6 +163,18 @@ function map(data) {
                     .style("top", (d.y - padding) + "px");
             }
 
+            //Changes the circles size depending on how many ids there are in a circle
+            marker.selectAll("circle").attr("r", function (d) {
+                if (d.properties.ids.length > LARGE && d.properties.ids.length < LARGER) {
+                    return 6;
+                }
+                else if (d.properties.ids.length > LARGEST) {
+                    return 10;
+                }
+                else
+                    return 3;
+            })
+
             var rr = {};
             var upOff = {};
             var id;
@@ -223,6 +235,8 @@ function map(data) {
             marker.on("click",  function(d){
                     
                 var cc = {};
+                //var id = d.properties.ids.split(",");
+                console.log("CLICK: " + d.properties.hired.length)
                
                 var idIndex =0;
                 uniqeIdAndRides.forEach( function(dUnique,n){
