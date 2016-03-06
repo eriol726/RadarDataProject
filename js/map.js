@@ -2,19 +2,33 @@
 function map(data, graphData) {
    // area2 = new area();
 
+   var dataSorted = graphData;
+
+       //sort first by id, then by date
+        var s = firstBy(function (v1, v2) { return v1.id < v2.id ? -1 : (v1.id > v2.id ? 1 : 0); })
+                 .thenBy(function (v1, v2) { 
+
+                    var v1Date = new Date(v1.date);
+                    var v2Date = new Date(v2.date);
+
+                    return v1Date.getTime() - v2Date.getTime(); 
+        });
+        
+
+        //dummy month
+      
+    dataSorted.sort(s);
+
 
     var markedTaxi = 0;
     var uniqeTaxiData;
     var self = this;
 
-    var uniqeIdAndRides = totalCoustumerForTaxi(graphData);
-    var TotalRidesPerDay = totalCoustumerPerMonth(graphData);
-
-
-
-
-    //console.log("uniqeIdAndRides: ", uniqeIdAndRides);
-  //  console.log("ridesPerMonth", TotalRidesPerDay[0])
+    var uniqeIdAndRides = totalCoustumerForTaxi(dataSorted);
+    console.log("uniqeIdAndRides");
+    var TotalRidesPerDay = totalCoustumerPerMonth(dataSorted);
+    
+    console.log("ridesPerMonth")
 
    // console.log("uniqeIdAndRides: ", uniqeIdAndRides[0]);
 
@@ -196,21 +210,23 @@ function map(data, graphData) {
             marker.selectAll("circle").style("fill", function (d) { return upOff[d.properties.id] });
 
             marker.on("click",  function(d){
+             
+
+
                 //select id from point 
                 //search for id info 
                 //send id   
                 
                 var idIndex =0;
-                console.log(uniqeIdAndRides.length)
+               // console.log(uniqeIdAndRides.length)
                 uniqeIdAndRides.forEach( function(dUnique,n){
                     for(var j = 0; j < d.properties.ids.length; j++){
                         if(dUnique.id == parseFloat(d.properties.ids[j])){
                             idIndex = n;
-                            console.log(n)
+                            //console.log(n)
                             break;
                         }
                     }
-
                   
                 });
 
@@ -317,7 +333,7 @@ function map(data, graphData) {
 
         d3.selectAll("circle").style("opacity", function(d) {
 
-            var time = new Date(d.properties.time);
+            var time = new Date(d.properties.date);
           
          return (startTime <= time.getTime() && time.getTime() <= endTime) ? 1 : 0;
         });
@@ -376,19 +392,7 @@ function map(data, graphData) {
 
     function totalCoustumerForTaxi(data)
     {    
-        var dataSorted = data;
-
-       //sort first by id, then by date
-        var s = firstBy(function (v1, v2) { return v1.id < v2.id ? -1 : (v1.id > v2.id ? 1 : 0); })
-                 .thenBy(function (v1, v2) { 
-
-                    var v1Date = new Date(v1.date);
-                    var v2Date = new Date(v2.date);
-
-                    return v1Date.getTime() - v2Date.getTime(); 
-        });
         
-        dataSorted.sort(s);
 
 
         var uniqeIdAndRides =[];
@@ -399,12 +403,14 @@ function map(data, graphData) {
         // counting hired rides and push total hired rides for each ID into a new array
 
         var n = 0;
-        console.log(dataSorted.length)
 
-        var count = 0;
+        var month = [];
+
         for(var i = 1; i < dataSorted.length; i++){
             // check if we are out of bounds
-
+             if(i+1 == dataSorted.length){
+                break;
+            }
 
             var currentDate = new Date(dataSorted[i].date);
             var prevDate= new Date(dataSorted[i-1].date);
@@ -412,9 +418,7 @@ function map(data, graphData) {
             var prevDay = prevDate.getDate();
 
             
-            if(i+1 == dataSorted.length){
-                break;
-            }
+           
             // define time interval for current day
             
             
@@ -446,47 +450,41 @@ function map(data, graphData) {
             // push hiredRides for same ID into monthArray when day i changed
             // dont taka care of singel sampels
             if(currentDay !=  prevDay && dataSorted[i-1].id == dataSorted[i].id){
-                var month = [];
-
-                for(var n = 0; n < 30; n++){
+                
+                month = [];
+                for(var n = 0; n < 31; n++){
                     var dateString = "2013-03-"+n+" 00:00:01";
                     var monthDate = new Date(dateString);
                     if(n+1 == currentDay){
                         month[n] = {date: dateString, rides:  hiredRides};
                     }
                     else{
+
                         month[n] = {date: dateString, rides:  0};
                     }
                 }
-              
-             
+                
             }
-           
-           
-            // push month to uniqeID object array
+                // push month to uniqeID object array
             if(dataSorted[i-1].id != dataSorted[i].id){
               
                 uniqeIdAndRides.push({id: dataSorted[i].id, month: month});
-
                 hiredRides=0;
-                count++;
-            }
-            else if(dataSorted[i-1].id == dataSorted[i].id)
-            {   
-                var month2 = [];
-                var dateString = "2013-03-"+n+" 00:00:01";
-                for(var n = 0; n < 30; n++){
-                    month2[n] = {date: dateString, rides: 0};
-                }
-                uniqeIdAndRides.push({id: dataSorted[i].id, month: month2});
-            }
-            
+            }           
         }
-
-
+      
     return uniqeIdAndRides;
 
     }
+
+
+
+
+
+
+
+
+
 
 
     function addLine() {
@@ -507,19 +505,7 @@ function map(data, graphData) {
 
     function totalCoustumerPerMonth(data){
 
-        //sorting data by date
-        var dataSorted = data;
-
-       //sort first by id, then by date
-        var s = firstBy(function (v1, v2) { return v1.id < v2.id ? -1 : (v1.id > v2.id ? 1 : 0); })
-                 .thenBy(function (v1, v2) { 
-
-                    var v1Date = new Date(v1.date);
-                    var v2Date = new Date(v2.date);
-
-                    return v1Date.getTime() - v2Date.getTime(); });
         
-        dataSorted.sort(s);
 
         var uniqeIdAndRides =[];
         var BreakException= {};
@@ -529,8 +515,8 @@ function map(data, graphData) {
         var monthObject = [];
         var totalIds = [];
        
-        for (var n = 0; n < 31; n++) {
-            
+        for (var n = 0; n < 31; n++) 
+        {
             // define time interval for current day
             var dateStringBegin = "2013-03-"+(n+1)+" 00:00:00";
             var dateStringEnd = "2013-03-"+(n+1)+" 23:59:59";
