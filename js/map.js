@@ -4,41 +4,45 @@ function map(data) {
     //Set threshold for circle radius depending on number of ids (LARGE, LARGER, LARGEST)
     const LARGE = 500, LARGER = 1500, LARGEST = 15000;
 
-   // creating a new stucture for the dataset without id, date and hired arrays
-    var graphData = [];
+  
 
-    for (var i = 0; i<  700; i++) {
+    var graphData = prepareGraphData(data);
 
 
-        var id = data[i].ids.split(',');
-        var hired = data[i].hired.split(',');
-        var date = data[i].date.split(',');
-        for(var n = 0; n < hired.length; n++){
+    var uniqeIdAndRides = totalCoustumerForTaxi(graphData);
 
-            graphData.push({date: date[n], id:parseFloat(id[n]) , hired:hired[n]});
-        }
-    }
+    var TotalRidesPerDay = totalCoustumerPerMonth(graphData);
+
+     //creating a new data structure for map data
+    var newStructData = {type: "FeatureCollection", features: mapData(data)};
     
+    // create a new object array with an other structor, includeing customers 
+    function mapData(array,ridesAndIds ) {
+        var newData = [];
+        array.map(function (d, i) {
+            
+            var idIndex =0;
 
-    var dataSorted = graphData;
+            newData.push({
+                type: "Feature",
+                geometry: {
+                    type: 'Point',
+                    coordinates: [d.x_coord, d.y_coord],
+                    numberOfPoints: d.numberOfPoints
 
+                },
+                "properties" : {
+                "ids" : d.ids.split(','),
+                "date" : d.date.split(','),
+                "hired" : d.hired.split(',')
+                }
+            });
+        });
 
-    //sort first by id, then by date
-    var s = firstBy(function (v1, v2) { return v1.id < v2.id ? -1 : (v1.id > v2.id ? 1 : 0); })
-            .thenBy(function (v1, v2) { 
+        return newData;
+    }
 
-                var v1Date = new Date(v1.date);
-                var v2Date = new Date(v2.date);
-                return v1Date.getTime() - v2Date.getTime(); 
-    });
-
-        
-    dataSorted.sort(s);
-
-
-    var uniqeIdAndRides = totalCoustumerForTaxi(dataSorted);
-
-    var TotalRidesPerDay = totalCoustumerPerMonth(dataSorted);
+    var area1 = new area(TotalRidesPerDay);
 
     var mapDiv = $("#map");
 
@@ -86,36 +90,6 @@ function map(data) {
     .attr("class", "tooltip")
     .style("opacity", 0);
 
-    //Format to newStructData
-    var newStructData = {type: "FeatureCollection", features: uniqeIdFormat(data)};
-    
-    // create a new object array with an other structor, includeing customers 
-    function uniqeIdFormat(array,ridesAndIds ) {
-        var newData = [];
-        array.map(function (d, i) {
-            
-            var idIndex =0;
-
-            newData.push({
-                type: "Feature",
-                geometry: {
-                    type: 'Point',
-                    coordinates: [d.x_coord, d.y_coord],
-                    numberOfPoints: d.numberOfPoints
-
-                },
-                "properties" : {
-                "ids" : d.ids.split(','),
-                "date" : d.date.split(','),
-                "hired" : d.hired.split(',')
-                }
-            });
-        });
-
-        return newData;
-    }
-
-    var area1 = new area(TotalRidesPerDay);
 
     var overlay = new google.maps.OverlayView();
 
@@ -323,36 +297,36 @@ function map(data) {
 
         var month = [];
 
-        for(var i = 1; i < dataSorted.length; i++){
+        for(var i = 1; i < graphData.length; i++){
             // check if we are out of bounds
-             if(i+1 == dataSorted.length){
+             if(i+1 == graphData.length){
                 break;
             }
 
-            var currentDate = new Date(dataSorted[i].date);
-            var prevDate= new Date(dataSorted[i-1].date);
+            var currentDate = new Date(graphData[i].date);
+            var prevDate= new Date(graphData[i-1].date);
             var currentDay = currentDate.getDate();
             var prevDay = prevDate.getDate();
 
             
             // check absolut first element
-            if (i ==1 && dataSorted[i-1].hired == "t") {
+            if (i ==1 && graphData[i-1].hired == "t") {
                  hiredRides++;
             }
 
             //check first element in a block, hapends when id changeing
-            if (dataSorted[i-1].id != dataSorted[i].id){
+            if (graphData[i-1].id != graphData[i].id){
 
-                if(dataSorted[i].hired == 't' ){
+                if(graphData[i].hired == 't' ){
                     hiredRides++;
                 }
             }
 
             // this is a date block, hapends when prev id is same as current
-            if(currentDay ==  prevDay && dataSorted[i-1].id == dataSorted[i].id ){
+            if(currentDay ==  prevDay && graphData[i-1].id == graphData[i].id ){
 
                 //check if next taxi is hired in same block
-                if(dataSorted[i].hired == 'f' &&  dataSorted[i+1].hired == 't' ){
+                if(graphData[i].hired == 'f' &&  graphData[i+1].hired == 't' ){
                     hiredRides++;
                 }
                 
@@ -360,7 +334,7 @@ function map(data) {
 
             // push hiredRides for same ID into monthArray when day i is changed
             // dont taka care of singel sampels
-            if(currentDay !=  prevDay && dataSorted[i-1].id == dataSorted[i].id){
+            if(currentDay !=  prevDay && graphData[i-1].id == graphData[i].id){
                 
                 for(var n = 0; n < 31; n++){
                     // define time for current day
@@ -378,9 +352,9 @@ function map(data) {
                 
             }
                 // push month to uniqeID object array
-            if(dataSorted[i-1].id != dataSorted[i].id){
+            if(graphData[i-1].id != graphData[i].id){
               
-                uniqeIdAndRides.push({id: dataSorted[i].id, month: month});
+                uniqeIdAndRides.push({id: graphData[i].id, month: month});
                 month = []
                 hiredRides=0;
             }           
@@ -414,25 +388,25 @@ function map(data) {
             
             var hiredRides = 0;
             try{
-                dataSorted.forEach(function (d,i ) {
+                graphData.forEach(function (d,i ) {
                     var currentDate = new Date(d.date);
                     
                     //find rides for current day
                     if(beginTime.getTime() <= currentDate.getTime() &&   endTime.getTime() >= currentDate.getTime()  ){
                            
-                        if(typeof dataSorted[i+1] === "undefined"){
+                        if(typeof graphData[i+1] === "undefined"){
                             throw BreakException;
                         } 
                         //check if next taxi is hired in same block
-                        else if (dataSorted[i+1].id == dataSorted[i].id){
-                            if(dataSorted[i].hired == 'f' &&  dataSorted[i+1].hired == 't'){
+                        else if (graphData[i+1].id == graphData[i].id){
+                            if(graphData[i].hired == 'f' &&  graphData[i+1].hired == 't'){
                                 hiredRides++;
                             }
                         }
                         //check last sample in a block
-                        else if (dataSorted[i+1].id != dataSorted[i].id){
+                        else if (graphData[i+1].id != graphData[i].id){
                             // if it is a uniqe id and hired is true, count one 
-                            if(dataSorted[i].hired == 't'  && dataSorted[i-1].id != dataSorted[i].id){
+                            if(graphData[i].hired == 't'  && graphData[i-1].id != graphData[i].id){
                                 hiredRides++;
                             }
                         }
@@ -453,6 +427,37 @@ function map(data) {
       return totalIds
         
     }   
+
+    function prepareGraphData(data){
+         // creating a new stucture for the dataset without id, date and hired arrays
+        var graphData = [];
+
+        for (var i = 0; i<  700; i++) {
+
+
+            var id = data[i].ids.split(',');
+            var hired = data[i].hired.split(',');
+            var date = data[i].date.split(',');
+            for(var n = 0; n < hired.length; n++){
+
+                graphData.push({date: date[n], id:parseFloat(id[n]) , hired:hired[n]});
+            }
+        }
+        
+        //sort first by id, then by date
+        var s = firstBy(function (v1, v2) { return v1.id < v2.id ? -1 : (v1.id > v2.id ? 1 : 0); })
+                .thenBy(function (v1, v2) { 
+
+                    var v1Date = new Date(v1.date);
+                    var v2Date = new Date(v2.date);
+                    return v1Date.getTime() - v2Date.getTime(); 
+        });
+
+            
+        graphData.sort(s);
+
+        return graphData;
+    }
 
 }
 
