@@ -217,19 +217,8 @@ function map(data, graphData) {
                 //search for id info 
                 //send id   
                 
-                var idIndex =0;
-               // console.log(uniqeIdAndRides.length)
-                uniqeIdAndRides.forEach( function(dUnique,n){
-                    for(var j = 0; j < d.properties.ids.length; j++){
-                        if(dUnique.id == parseFloat(d.properties.ids[j])){
-                            idIndex = n;
-                            //console.log(n)
-                            break;
-                        }
-                    }
-                  
-                });
-
+                var idIndex =50;
+              
                 markedTaxi = 1;
                 //console.log(uniqeIdAndRides[idIndex.length])
                 
@@ -268,44 +257,30 @@ function map(data, graphData) {
                         return 0.1;
                 }) 
 
-                marker.selectAll("circle").style("fill", function (d) { return upOff[d.properties.id] });
+                console.log(uniqeIdAndRides[idIndex].id)
+                var points = area1.lineData(data, uniqeIdAndRides[idIndex].id); 
+                var transformedPoints = [];
+
+                points.forEach(function(d){
+                    var coord = {lat: d.y_coord, lng: d.x_coord};
+                    transformedPoints.push(coord);
+                })
+                // console.log("Transformedpoints: " + transformedPoints)
+                
+                self.flightPath = new google.maps.Polyline({
+                            path: transformedPoints,
+                            geodesic: true,
+                            strokeColor: '#FF0000',
+                            strokeOpacity: 1.0,
+                            strokeWeight: 2
+                });
+                addLine();
+                    
                
 
- 
-              
-
-                var timeFirst = new Date(timeUpOff[0]);
-                var timeLast = new Date(timeUpOff[Number.parseInt(timeUpOff.length) - 1]);
-
-                var col = cc[d.properties.id];
-
-
-
-                div.transition()
-                   .duration(150)
-                   .style("opacity", .9);
-                div.html(
-
-                    //Information box that shows id, and the time for the pick up and drop off
-                    "<p>ID: " + d.properties.id + "</p>" +
-                    "<p>Start: " + timeFirst.getHours() + ":" + timeFirst.getMinutes() + ":" + timeFirst.getSeconds() + "</p>" +
-                    "<div id='dot' style='background:" + col + "' ></div>" + "<div id='dot' style='background:" + col + "' ></div>" + "<div id='dot' style='background:" + col + "' ></div>" +
-                    "<p>End: " + timeLast.getHours() + ":" + timeLast.getMinutes() + ":" + timeLast.getSeconds() + "</p>"+"<br>"+
-                    "<form>"+ "Choose ID:"+"<input type="+"text"+" name="+"choosenID"+">") 
-
-
-                   .style("left", (d3.event.pageX) + 10 + "px")
-                   .style("top", (d3.event.pageY - 30) + "px");
 
             })
               
-           
-
-
-           // d3.selectAll("circle")
-             //   .on("click",  function(d) {
-               //  return filterID(d.properties.id);
-            //});
 
 
         };
@@ -572,4 +547,4 @@ function map(data, graphData) {
     }   
 
 }
- 
+

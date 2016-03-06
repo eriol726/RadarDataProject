@@ -6,7 +6,7 @@ var thenBy1;
 d3.csv("data/cities.csv", function (data) {
 	var graphData = [];
 
-	for (var i = 0; i <  800; i++) {
+	for (var i = 0; i <1000; i++) {
 		var id = data[i].ids.split(',');
 		var hired = data[i].hired.split(',');
 		var date = data[i].date.split(',');
