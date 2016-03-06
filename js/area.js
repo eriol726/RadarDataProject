@@ -9,7 +9,7 @@
 function area(aData) {
     var self = this;
     
-    console.log("aData: ", aData[0]);
+   // console.log("aData: ", aData[0]);
     var areaDivSmall = $("#areaSmall");
     var areaDivBig = $("#areaBig");
 
@@ -26,8 +26,8 @@ function area(aData) {
     //Sets the data format
     var format = d3.time.format.utc("%Y-%m-%d %H:%M:%S").parse;//Complete the code
 
+
     //Sets the scales 
-   
     var x = d3.time.scale().range([0, width]),
         x2 = d3.time.scale().range([0, width2]),
         y = d3.scale.linear().range([height, 0]),
@@ -156,7 +156,7 @@ function area(aData) {
         //Complete the code
 
 
-        console.log("map1: ", brush.extent());
+      //  console.log("map1: ", brush.extent());
         map1.filterTime(brush.extent());
     }
 
@@ -192,16 +192,12 @@ function area(aData) {
 
     this.update1 = function(data){
 
-        
-         //var svg = d3.select("body").transition();
-
     //Initializes the axis domains for the big chart
     x.domain(dimensions = d3.extent(data[0].month.map(function(d) {  return format(d.date); })));
     y.domain(dimensions2 = d3.extent(data[0].month.map(function(d) { return parseFloat(d.rides); })));
     //Initializes the axis domains for the small chart
     x2.domain(x.domain());
     y2.domain(y.domain());
-    
 
     //remove past static in graphs
     focus.selectAll("path").remove()    
@@ -250,8 +246,6 @@ function area(aData) {
             .selectAll("rect")
             .attr("y", -6)
             .attr("height", height2 + 7);
-
-
     }
 
     
