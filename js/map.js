@@ -1,6 +1,19 @@
 
-function map(data, graphData) {
+function map(data) {
    // area2 = new area();
+
+   // creating a new stucture for the dataset without id, date and hired arrays
+   var graphData = [];
+    for (var i = 0; i<  data.length; i++) {
+
+        var id = data[i].ids.split(',');
+        var hired = data[i].hired.split(',');
+        var date = data[i].date.split(',');
+        for(var n = 0; n < hired.length; n++){
+
+            graphData.push({date: date[n], id:parseFloat(id[n]) , hired:hired[n]});
+        }
+    }
 
 
     var markedTaxi = 0;
@@ -67,7 +80,7 @@ function map(data, graphData) {
 
 
 
-    //Format to geoData
+    //Format to newStructData
     var newStructData = {type: "FeatureCollection", features: uniqeIdFormat(data)};
     
     // create a new object array with an other structor, includeing customers 
@@ -353,9 +366,11 @@ function map(data, graphData) {
         var startTime = value[0].getTime();
         var endTime = value[1].getTime();
 
+        console.log("startTime", value[0])
+
         d3.selectAll("circle").style("opacity", function(d) {
 
-            var time = new Date(d.properties.time);
+            var time = new Date(d.properties.date);
           
          return (startTime <= time.getTime() && time.getTime() <= endTime) ? 1 : 0;
         });
