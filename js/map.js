@@ -149,9 +149,11 @@ function map(data) {
                     return 3;
             })
 
-    
+            list1 = new list();
             //Marks circles red if the drop off a customer and green if the picked up a customer
-            marker.on("click",  function(d){
+            marker.on("click", function (d) {
+                list1.update1(d, uniqeIdAndRides, marker);
+         
             if(! (typeof self.flightPath == "undefined")){removeLine();}
 
                 var idIndex = 0;
@@ -164,82 +166,60 @@ function map(data) {
                     }
                 });
 
-                if(idIndex == 0){
-                    console.log("index is 0");
-                }
+                map1.click(marker, uniqeIdAndRides, idIndex);
+        });
+    }
 
-                list1.update1(d);
-                   
-                //send marked pont to the graph
-                area1.update1([uniqeIdAndRides[idIndex]])  
+        self.click = function (marker, uniqeIdAndRides, idIndex) {
+
+            console.log("IDINDEX: " + idIndex)
+                           
+        //send marked pont to the graph
+        area1.update1([uniqeIdAndRides[idIndex]])  
         
-                var cc = {};
+        var cc = {};
                    
-                if(! (typeof self.flightPath == "undefined")){removeLine();}
+        if(! (typeof self.flightPath == "undefined")){removeLine();}
                     
-                var timeUpOff = [];
-                var count = 0;
-                //On click highlight the clicked dot by lower the opacity on all others.
-                marker.selectAll("circle")
-                    .style("opacity", function(mark, i){
+        var timeUpOff = [];
+        var count = 0;
+        //On click highlight the clicked dot by lower the opacity on all others.
 
-                          
-                    if(mark.properties.id == d.properties.id) {
+           
 
-                        //Saves the time for all the dots with the same id.
-                        timeUpOff[count] = mark.properties.time;
-                        count++;
+        var points = area1.lineData(data, uniqeIdAndRides[idIndex].id); 
+        var transformedPoints = [];
 
-                        if (mark.properties.hired == "t") {
-                            cc[d.properties.id] = color[1];
-                        }
-                        else
-                            cc[d.properties.id] = color[0];
-                          
-                        var markedID = 0;
-                        self.markedID = d.properties.id;
-
-                        return 1;
-                    }
-                    else 
-                        return 0.1;
-                }) 
-
-                var points = area1.lineData(data, uniqeIdAndRides[idIndex].id); 
-                var transformedPoints = [];
-
-                points.forEach(function(d){
-                    var coord = {lat: d.y_coord, lng: d.x_coord};
-                    transformedPoints.push(coord);
-                })
-                // console.log("Transformedpoints: " + transformedPoints)
+        points.forEach(function(d){
+            var coord = {lat: d.y_coord, lng: d.x_coord};
+            transformedPoints.push(coord);
+        })
+        // console.log("Transformedpoints: " + transformedPoints)
                 
-                self.flightPath = new google.maps.Polyline({
-                            path: transformedPoints,
-                            geodesic: true,
-                            strokeColor: '#f03b20',
-                            strokeOpacity: 1.0,
-                            strokeWeight: 2
-                });
+        self.flightPath = new google.maps.Polyline({
+            path: transformedPoints,
+            geodesic: true,
+            strokeColor: '#f03b20',
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+        });
 
 
-                marker.selectAll("circle")
-                      .style("opacity", function (di) {
-                        var contains = false;
-                        for(var i = 0; i < di.properties.ids.length; i++){
-                            if(parseFloat(di.properties.ids[i]) == uniqeIdAndRides[idIndex].id){
-                                return 0.8;
-                            }
-                        }                          
-                        return 0.2;
+        marker.selectAll("circle")
+              .style("opacity", function (di) {
+                  var contains = false;
+                  for(var i = 0; i < di.properties.ids.length; i++){
+                      if(parseFloat(di.properties.ids[i]) == uniqeIdAndRides[idIndex].id){
+                          return 0.8;
+                      }
+                  }                          
+                  return 0.2;
                   
-             })
-                addLine();
+              })
+        addLine();
  
-            })
-        };
-    };
-
+        }
+    }
    
 
     // Bind our overlay to the map…

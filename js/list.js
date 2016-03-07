@@ -1,5 +1,5 @@
 ﻿function list() {
-
+    self = this;
     //---------------------------------------------------------------------------------
 
     //Define value names and put a tag for the specific value type
@@ -18,7 +18,7 @@
     var detList = new List('detailList', options, values);
 
     //------------------------------------------------------------------------------------------
-    this.update1 = function draw(data) {
+    this.update1 = function draw(data, uniqeIdAndRides, marker) {
        
         var uniqueID = [];
         var numberIDs = [];
@@ -40,7 +40,6 @@
             
         })
 
-        console.log("TEST: " + uniqueID[0][1])
         uniqueID.forEach(function (d, i) {
             detList.add({
                     id: "ID: " + uniqueID[i],
@@ -48,6 +47,24 @@
                 });
         })
 
+        document.getElementById('detailList').addEventListener('click', function (event) {
+            if ('LI' != event.target.tagName) return;
+            var temp = event.target.innerText.split(":");
+            var temp2 = temp[1].split("\n");
+            console.log(temp2[0]);
+            //alert(temp2[0])
+            var listID = parseFloat(temp2[0]);
+
+            uniqueID.indexOf(listID);
+            
+            var tempID = 0;
+            uniqeIdAndRides.forEach(function (d, i) {
+                
+                if (d.id == listID) { console.log(true); tempID = i }
+            })
+            map1.click(marker, uniqeIdAndRides, tempID);
+        }, false);
         
     }
+    
 }
