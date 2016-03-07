@@ -150,7 +150,7 @@ function map(data, graphData) {
                     .style("top", (d.y - padding) + "px");
             }
 
-            //Changes the circles size depending on how many ids there are in a circle
+            //Changes the circles' size depending on how many ids there are in a circle
             marker.selectAll("circle").attr("r", function (d) {
                 if (d.properties.ids.length > LARGE && d.properties.ids.length < LARGER) {
                     return 6;
@@ -223,20 +223,19 @@ function map(data, graphData) {
                     
                 var cc = {};
                 //var id = d.properties.ids.split(",");
-                console.log("CLICK: " + d.properties.hired.length)
                
                 var idIndex =0;
                 uniqeIdAndRides.forEach( function(dUnique,n){
-                   if(d.id == dUnique.id )
+                    if (d.properties.ids == dUnique.id) {
                         idIndex = n;
-                    console.log("hej")
+                    }
+
                 });
 
                 markedTaxi = 1;
 
-                area1.update1([uniqeIdAndRides[idIndex]])  
-
-
+                area1.update1([uniqeIdAndRides[idIndex]]);
+                list1.update1(d);
                     
                 if(! (typeof self.flightPath == "undefined")){removeLine();}
                     
@@ -326,7 +325,7 @@ function map(data, graphData) {
                    .style("opacity", .9);
                 div.html(
 
-                    //Information box that shows id, and the time for the pick up and drop off
+                    //Information box that shows id and time for the pick up and drop off
                     "<p>ID: " + d.properties.id + "</p>" +
                     "<p>Start: " + timeFirst.getHours() + ":" + timeFirst.getMinutes() + ":" + timeFirst.getSeconds() + "</p>" +
                     "<div id='dot' style='background:" + col + "' ></div>" + "<div id='dot' style='background:" + col + "' ></div>" + "<div id='dot' style='background:" + col + "' ></div>" +

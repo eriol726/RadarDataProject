@@ -11,15 +11,17 @@ function area(aData) {
     
     console.log("aData: ", aData[0]);
     var areaDivSmall = $("#areaSmall");
+    var areaDivMedium = $("#areaMedium");
     var areaDivBig = $("#areaBig");
-
    
 
 
-    var margin = {top: 100, right: 40, bottom: 100, left: 40},
-        margin2 = {top: areaDivSmall.height() - 50, right: 40, bottom: 20, left: 40},
+    var margin = { top: 40, right: 40, bottom: 40, left: 40 },
+        margin2 = { top: areaDivSmall.height() - 50, right: 40, bottom: 20, left: 40 },
+
         width = areaDivBig.width() - margin.left - margin.right,
         width2 = areaDivSmall.width() - margin2.left - margin2.right,
+
         height = areaDivBig.height() - margin.top - margin.bottom,
         height2 = areaDivSmall.height() - margin2.top - margin2.bottom;
 
@@ -75,7 +77,7 @@ function area(aData) {
 
     var svgBig = d3.select("#areaBig").append("svg")
             .attr("width",  width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom );
+            .attr("height", height + margin.top + margin.bottom);
     
     //Defines clip region
     svgSmall.append("defs").append("clipPath")
@@ -89,7 +91,7 @@ function area(aData) {
             .append("rect")
             .attr("width", width)
             .attr("height", height);
-    
+
     //Defines the focus area
     var focus = svgBig.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -97,8 +99,6 @@ function area(aData) {
     //Defines the context area
     var context = svgSmall.append("g")
             .attr("transform", "translate(" + margin2.left + "," +  margin2.top + ")");
-
-    // console.log(ridesAndIds[0]);
 
     //Initializes the axis domains for the big chart
     x.domain(dimensions = d3.extent(aData[0].month.map(function(d) {  return format(d.date); })));
@@ -142,9 +142,7 @@ function area(aData) {
             .call(brush)
             .selectAll("rect")
             .attr("y", -6)
-            .attr("height", height2 + 7);
-    
-    
+            .attr("height", height2 + 7); 
   
      
 
