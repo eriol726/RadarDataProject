@@ -9,7 +9,7 @@
 function area(aData) {
     var self = this;
     
-    console.log("aData: ", aData[0]);
+   // console.log("aData: ", aData[0]);
     var areaDivSmall = $("#areaSmall");
     var areaDivMedium = $("#areaMedium");
     var areaDivBig = $("#areaBig");
@@ -28,9 +28,8 @@ function area(aData) {
     //Sets the data format
     var format = d3.time.format.utc("%Y-%m-%d %H:%M:%S").parse;//Complete the code
 
-    console.log("Data: ", aData);
+
     //Sets the scales 
-   
     var x = d3.time.scale().range([0, width]),
         x2 = d3.time.scale().range([0, width2]),
         y = d3.scale.linear().range([height, 0]),
@@ -155,38 +154,48 @@ function area(aData) {
         //Complete the code
 
 
-        console.log("map1: ", map1);
+      //  console.log("map1: ", brush.extent());
         map1.filterTime(brush.extent());
     }
 
 
 
-    this.lineData = function(){
+    this.lineData = function(data, id){
         var lineData = [];
+        for(var i = 0; i < data.length; i++){
+            
+            var idArray = data[i].ids.split(',');
+            var timeArray = data[i].date.split(',');
+            idArray.forEach(function(d,j){
+                if(id == parseFloat(d)){
+                    lineData.push({x_coord:parseFloat(data[i].x_coord),y_coord: parseFloat(data[i].y_coord), date:timeArray[j]});
+                }
+            })
+            
+        }
+    
+    sortByKey(lineData, "date") 
+    
       
-        map1.selfData.forEach(function(d,j){
-            if(d[0].id == map1.markedID){
-                d.forEach(function(di,i){
-                    lineData.push([parseFloat(di.x_coord), parseFloat(di.y_coord)]);
-                })
-            }
-        })
-        return lineData;
+    return lineData;
 
+    }
+    
+    function sortByKey(array, key) {
+        return array.sort(function(a, b) {
+            var x = a[key]; var y = b[key];
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        });
     }
 
     this.update1 = function(data){
-        console.log("update: ", data)
-        
-         //var svg = d3.select("body").transition();
 
-          //Initializes the axis domains for the big chart
+    //Initializes the axis domains for the big chart
     x.domain(dimensions = d3.extent(data[0].month.map(function(d) {  return format(d.date); })));
     y.domain(dimensions2 = d3.extent(data[0].month.map(function(d) { return parseFloat(d.rides); })));
     //Initializes the axis domains for the small chart
     x2.domain(x.domain());
     y2.domain(y.domain());
-    
 
     //remove past static in graphs
     focus.selectAll("path").remove()    
@@ -235,8 +244,6 @@ function area(aData) {
             .selectAll("rect")
             .attr("y", -6)
             .attr("height", height2 + 7);
-
-
     }
 
     
