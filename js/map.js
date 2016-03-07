@@ -12,7 +12,7 @@ function map(data) {
 
     var TotalRidesPerDay = totalCoustumerPerMonth(graphData);
     console.log("done, with TotalRidesPerDay");
-
+    self.marked = false;
     var area1 = new area(TotalRidesPerDay);
 
      //creating a new data structure for map data
@@ -156,7 +156,7 @@ function map(data) {
             // If a point is marked, do this
             marker.on("click", function (d) {
                 list1.update1(d, uniqeIdAndRides, marker);
-         
+                self.marked = true;
             if(! (typeof self.flightPath == "undefined")){removeLine();}
 
 
@@ -186,23 +186,17 @@ function map(data) {
                     
            
 
-        var points = area1.lineData(data, uniqeIdAndRides[idIndex].id); 
+        self.points = area1.lineData(data, uniqeIdAndRides[idIndex].id); 
         var transformedPoints = [];
 
-        points.forEach(function(d){
+        self.points.forEach(function(d){
             var coord = {lat: d.y_coord, lng: d.x_coord};
             transformedPoints.push(coord);
         })
         // console.log("Transformedpoints: " + transformedPoints)
 
                 
-        self.flightPath = new google.maps.Polyline({
-            path: transformedPoints,
-            geodesic: true,
-            strokeColor: '#f03b20',
-            strokeOpacity: 1.0,
-            strokeWeight: 2
-        });
+       drawLines(transformedPoints);
 
 
         marker.selectAll("circle")
@@ -221,6 +215,22 @@ function map(data) {
 
         return
     }
+
+    function drawLines(transformedPoints)
+    {
+
+        if(! (typeof self.flightPath == "undefined")){removeLine();}
+
+        self.flightPath = new google.maps.Polyline({
+            path: transformedPoints,
+            geodesic: true,
+            strokeColor: '#f03b20',
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+        });
+        addLine();
+
+    }
    
 
     // Bind our overlay to the map…
@@ -233,28 +243,54 @@ function map(data) {
     });
 
 
-    this.filterTime = function (value) {
-        if(! (typeof self.flightPath == "undefined")){removeLine();}
+      this.filterTime = function (value) {
+        
+
         var startTime = value[0].getTime();
         var endTime = value[1].getTime();
 
-        //console.log("startTime", value[0])
 
-        d3.selectAll("circle").style("opacity", function(d) {
-
-            
-        for (var i = 0; i < d.properties.date.length; i++){
-            var time = new Date(d.properties.date[i]);
-
-            if(startTime <= time.getTime() && time.getTime() <= endTime){
-                return 1;
-            }           
-        }
-        return 0;
         
-      });
+
+        if(self.marked){
+            var newDrawPoints = [];           
+            d3.selectAll("circle").style("opacity", function(d) {
+                
+                for(var i = 0; i < self.points.length; i++){
+                    if(self.points[i].x_coord == d.geometry.coordinates[0] 
+                    && self.points[i].y_coord == d.geometry.coordinates[1]){
+                        var time = new Date(d.properties.date[i]);
+
+                        if(startTime <= time.getTime() && time.getTime() <= endTime){
+                            newDrawPoints.push({lat: self.points[i].y_coord, lng: self.points[i].x_coord, date: d.properties.date[i]});
+                            return 1;
+
+                        } 
+                    }
+                }
+
+                drawLines(area1.sortByKey(newDrawPoints, "date") );
+                return 0.05;
+              
+            })        
+        }
+        else{
+            d3.selectAll("circle").style("opacity", function(d) {
+
+                
+            for (var i = 0; i < d.properties.date.length; i++){
+                var time = new Date(d.properties.date[i]);
+
+                if(startTime <= time.getTime() && time.getTime() <= endTime){
+                    return 1;
+                }           
+            }
+            return 0;
             
+          });
+      }      
     };
+
 
     //Function that filter to only pickups and dropoffs.
     this.filterUpOff = function (value) {

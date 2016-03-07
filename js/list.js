@@ -56,13 +56,16 @@
             var listID = parseFloat(temp2[0]);
 
             uniqueID.indexOf(listID);
-            
+            self.marked = true;
             var tempID = 0;
             uniqeIdAndRides.forEach(function (d, i) {
                 
-                if (d.id == listID) { console.log(true); tempID = i }
+                if (d.id == listID) {
+                    console.log(i)
+                    map1.click(marker, uniqeIdAndRides, i);
+                }
             })
-            map1.click(marker, uniqeIdAndRides, tempID);
+            
         }, false);
         
     }
