@@ -273,7 +273,7 @@ function map(data) {
     }
 
     // counting hired rides and push total hired rides for each taxi into a new array
-    function totalCoustumerForTaxi(data)
+    function totalCoustumerForTaxi(graphData)
     {    
 
         var uniqeIdAndRides =[];
@@ -284,7 +284,7 @@ function map(data) {
 
         for(var i = 1; i < graphData.length; i++){
             // check if we are out of bounds
-             if(i+1 == graphData.length){
+            if(i+1 == graphData.length){
                 break;
             }
 
@@ -343,7 +343,7 @@ function map(data) {
     }
 
     // pushing in total hired rides for all taxis into an object array
-    function totalCoustumerPerMonth(data){
+    function totalCoustumerPerMonth(graphData){
 
         var uniqeIdAndRides =[];
         var BreakException= {};
@@ -365,34 +365,38 @@ function map(data) {
             //reset the rides for current day
             
             var hiredRides = 0;
-            try{
-                graphData.forEach(function (d,i ) {
-                    var currentDate = new Date(d.date);
-                    
-                    //find rides for current day
-                    if(beginTime.getTime() <= currentDate.getTime() &&   endTime.getTime() >= currentDate.getTime()  ){
-                           
-                        if(typeof graphData[i+1] === "undefined"){
-                            throw BreakException;
-                        } 
-                        //check if next taxi is hired in same block
-                        else if (graphData[i+1].id == graphData[i].id){
-                            if(graphData[i].hired == 'f' &&  graphData[i+1].hired == 't'){
-                                hiredRides++;
-                            }
-                        }
-                        //check last sample in a block
-                        else if (graphData[i+1].id != graphData[i].id){
-                            // if it is a uniqe id and hired is true, count one 
-                            if(graphData[i].hired == 't'  && graphData[i-1].id != graphData[i].id){
-                                hiredRides++;
-                            }
+            
+            for (var i = 0; i < graphData.length; i++) {
+
+                // check if we are out of bounds
+                if(i+1 == graphData.length){
+                    break;
+                }
+                 
+                var currentDate = new Date(graphData[i].date);
+                
+                //find rides for current day
+                if(beginTime.getTime() <= currentDate.getTime() &&   endTime.getTime() >= currentDate.getTime()  ){
+                       
+                    if(typeof graphData[i+1] === "undefined"){
+                        throw BreakException;
+                    } 
+                    //check if next taxi is hired in same block
+                    else if (graphData[i+1].id == graphData[i].id){
+                        if(graphData[i].hired == 'f' &&  graphData[i+1].hired == 't'){
+                            hiredRides++;
                         }
                     }
-                });
-            }catch(e) {
-                if (e!==BreakException) throw e;
-            } 
+                    //check last sample in a block
+                    else if (graphData[i+1].id != graphData[i].id){
+                        // if it is a uniqe id and hired is true, count one 
+                        if(graphData[i].hired == 't'  && graphData[i-1].id != graphData[i].id){
+                            hiredRides++;
+                        }
+                    }
+                }
+            }
+            
             
             //add all the rides for all taxis for current day
             var objectDateString = "2013-03-"+(n+1)+" 00:00:00";
@@ -411,7 +415,7 @@ function map(data) {
          // creating a new stucture for the dataset without id, date and hired arrays
         var graphData = [];
 
-        for (var i = 0; i<  820; i++) {
+        for (var i = 0; i<  900; i++) {
 
 
             var id = data[i].ids.split(',');
