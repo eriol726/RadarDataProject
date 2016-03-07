@@ -198,6 +198,7 @@ function area(aData) {
     //Initializes the axis domains for the small chart
     x2.domain(x.domain());
     y2.domain(y.domain());
+    
 
     //remove past static in graphs
     focus.selectAll("path").remove()    
@@ -246,6 +247,8 @@ function area(aData) {
             .selectAll("rect")
             .attr("y", -6)
             .attr("height", height2 + 7);
+
+
     }
 
     

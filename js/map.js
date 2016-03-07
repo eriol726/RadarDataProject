@@ -150,9 +150,10 @@ function map(data) {
             })
 
     
-            //Marks circles red if the drop off a customer and green if the picked up a customer
+            // If a point is marked, do this
             marker.on("click",  function(d){
-            if(! (typeof self.flightPath == "undefined")){removeLine();}
+                // if 
+                if(! (typeof self.flightPath == "undefined")){removeLine();}
 
                 var idIndex = 0;
 
@@ -173,36 +174,6 @@ function map(data) {
         
                 var cc = {};
                    
-                if(! (typeof self.flightPath == "undefined")){removeLine();}
-                    
-                var timeUpOff = [];
-                var count = 0;
-                //On click highlight the clicked dot by lower the opacity on all others.
-                marker.selectAll("circle")
-                    .style("opacity", function(mark, i){
-
-                          
-                    if(mark.properties.id == d.properties.id) {
-
-                        //Saves the time for all the dots with the same id.
-                        timeUpOff[count] = mark.properties.time;
-                        count++;
-
-                        if (mark.properties.hired == "t") {
-                            cc[d.properties.id] = color[1];
-                        }
-                        else
-                            cc[d.properties.id] = color[0];
-                          
-                        var markedID = 0;
-                        self.markedID = d.properties.id;
-
-                        return 1;
-                    }
-                    else 
-                        return 0.1;
-                }) 
-
                 var points = area1.lineData(data, uniqeIdAndRides[idIndex].id); 
                 var transformedPoints = [];
 
@@ -220,18 +191,17 @@ function map(data) {
                             strokeWeight: 2
                 });
 
-
                 marker.selectAll("circle")
                       .style("opacity", function (di) {
-                        var contains = false;
+
                         for(var i = 0; i < di.properties.ids.length; i++){
-                            if(parseFloat(di.properties.ids[i]) == uniqeIdAndRides[idIndex].id){
-                                return 0.8;
+                            if(parseFloat(di.properties.ids[0]) == uniqeIdAndRides[idIndex].id){
+                                return 1;
                             }
                         }                          
-                        return 0.2;
-                    
-             })
+                        return 0.2;    
+                });
+
                 addLine();
  
             })
