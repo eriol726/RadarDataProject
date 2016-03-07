@@ -8,20 +8,22 @@ function map(data) {
     var graphData = prepareGraphData(data);
 
     var uniqeIdAndRides = totalCoustumerForTaxi(graphData);
+    console.log("done, with uniqeIdAndRides");
 
     var TotalRidesPerDay = totalCoustumerPerMonth(graphData);
+    console.log("done, with TotalRidesPerDay");
 
     var area1 = new area(TotalRidesPerDay);
 
      //creating a new data structure for map data
     var newStructData = {type: "FeatureCollection", features: mapData(data)};
+    console.log("done, with structureing mapData");
     
     // create a new object array with an other structure 
     function mapData(array ) {
         var newData = [];
         array.map(function (d, i) {
             
-            var idIndex =0;
 
             newData.push({
                 type: "Feature",
@@ -42,7 +44,7 @@ function map(data) {
         return newData;
     }
 
-    
+
 
     var mapDiv = $("#map");
 
@@ -137,7 +139,7 @@ function map(data) {
                     .style("top", (d.y - padding) + "px");
             }
 
-            //Changes the circles size depending on how many ids there are in a circle
+            //Changes the circles' size depending on how many ids there are in a circle
             marker.selectAll("circle").attr("r", function (d) {
                 if (d.properties.ids.length > LARGE && d.properties.ids.length < LARGER) {
                     return 6;
@@ -149,65 +151,76 @@ function map(data) {
                     return 3;
             })
 
-    
+
+            list1 = new list();
             // If a point is marked, do this
-            marker.on("click",  function(d){
-                // if 
-                if(! (typeof self.flightPath == "undefined")){removeLine();}
+            marker.on("click", function (d) {
+                list1.update1(d, uniqeIdAndRides, marker);
+         
+            if(! (typeof self.flightPath == "undefined")){removeLine();}
+
 
                 var idIndex = 0;
 
-                //find index for marked point
+                //find index for marked point, if the first id from newStructDatas ids Array exists in dUnique
                 uniqeIdAndRides.forEach( function(dUnique,n){
                     if(d.properties.ids[0] == dUnique.id ){
-                        console.log(dUnique.id);
                         idIndex = n;
                     }
                 });
 
-                if(idIndex == 0){
-                    console.log("index is 0");
-                }
+                map1.click(marker, uniqeIdAndRides, idIndex);
+        });
+    }
 
-                //send marked pont to the graph
-                area1.update1([uniqeIdAndRides[idIndex]])  
+    self.click = function (marker, uniqeIdAndRides, idIndex) {
+
+        console.log("id: " + uniqeIdAndRides[idIndex].id)
+                           
+        //send marked pont to the graph
+        area1.update1([uniqeIdAndRides[idIndex]])  
         
-                var cc = {};
+        var cc = {};
                    
-                var points = area1.lineData(data, uniqeIdAndRides[idIndex].id); 
-                var transformedPoints = [];
+        if(! (typeof self.flightPath == "undefined")){removeLine();}
+                    
+           
 
-                points.forEach(function(d){
-                    var coord = {lat: d.y_coord, lng: d.x_coord};
-                    transformedPoints.push(coord);
-                })
-                // console.log("Transformedpoints: " + transformedPoints)
+        var points = area1.lineData(data, uniqeIdAndRides[idIndex].id); 
+        var transformedPoints = [];
+
+        points.forEach(function(d){
+            var coord = {lat: d.y_coord, lng: d.x_coord};
+            transformedPoints.push(coord);
+        })
+        // console.log("Transformedpoints: " + transformedPoints)
+
                 
-                self.flightPath = new google.maps.Polyline({
-                            path: transformedPoints,
-                            geodesic: true,
-                            strokeColor: '#f03b20',
-                            strokeOpacity: 1.0,
-                            strokeWeight: 2
-                });
+        self.flightPath = new google.maps.Polyline({
+            path: transformedPoints,
+            geodesic: true,
+            strokeColor: '#f03b20',
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+        });
 
-                marker.selectAll("circle")
-                      .style("opacity", function (di) {
 
-                        for(var i = 0; i < di.properties.ids.length; i++){
-                            if(parseFloat(di.properties.ids[0]) == uniqeIdAndRides[idIndex].id){
-                                return 1;
-                            }
-                        }                          
-                        return 0.2;    
-                });
-
-                addLine();
+        marker.selectAll("circle")
+              .style("opacity", function (di) {
+                  for(var i = 0; i < di.properties.ids.length; i++){
+                      if(parseFloat(di.properties.ids[i]) == uniqeIdAndRides[idIndex].id){
+                          return 1;
+                      }
+                  }                          
+                  return 0.2;
+                  
+              })
+        addLine();
  
-            })
-        };
-    };
+        }
 
+        return
+    }
    
 
     // Bind our overlay to the map…
@@ -398,7 +411,7 @@ function map(data) {
          // creating a new stucture for the dataset without id, date and hired arrays
         var graphData = [];
 
-        for (var i = 0; i<  700; i++) {
+        for (var i = 0; i<  820; i++) {
 
 
             var id = data[i].ids.split(',');
@@ -410,6 +423,8 @@ function map(data) {
             }
         }
         
+        console.log("done, with structureing graphData");
+
         //sort first by id, then by date
         var s = firstBy(function (v1, v2) { return v1.id < v2.id ? -1 : (v1.id > v2.id ? 1 : 0); })
                 .thenBy(function (v1, v2) { 
