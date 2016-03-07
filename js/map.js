@@ -92,6 +92,8 @@ function map(data) {
     .attr("class", "tooltip")
     .style("opacity", 0);
 
+    //Create new list
+    list1 = new list();
 
     var overlay = new google.maps.OverlayView();
 
@@ -151,14 +153,13 @@ function map(data) {
                     return 3;
             })
 
-
-            list1 = new list();
             // If a point is marked, do this
             marker.on("click", function (d) {
-                list1.update1(d, uniqeIdAndRides, marker);
+
+                var clickedTaxi = list1.update1(d, uniqeIdAndRides, marker);
                 self.marked = true;
 
-                console.log("di coord ", d.geometry.coordinates);
+                console.log("clickedTaxi: ", clickedTaxi);
                 var markedPositionCoord = d.geometry.coordinates;
 
                 var idIndex = 0;
@@ -172,16 +173,25 @@ function map(data) {
                 }
                     
 
-                map1.click(marker, uniqeIdAndRides, idIndex, markedPositionCoord);
+               marker.select("circle")
+              .style("opacity", function (di, m) {
+
+                //for(var i = 0; i < self.points.length; i++){
+                    if(markedPositionCoord[0] == di.geometry.coordinates[0] 
+                        && markedPositionCoord[1] == di.geometry.coordinates[1]){
+                        found = 1;
+                        console.log("found");
+                        return 1;
+                    }
+              
+                  return 0.2;
+                  
+              })
             });
     }
 
     self.click = function (marker, uniqeIdAndRides, idIndex, markedPositionCoord) {
 
-        console.log("id: " + uniqeIdAndRides[idIndex].id)
-                           
-        //send marked pont to the graph
-        area1.update1([uniqeIdAndRides[idIndex]])  
         
         var cc = {};
                    
@@ -201,20 +211,7 @@ function map(data) {
 
         var found = 0;
 
-        marker.select("circle")
-              .style("opacity", function (di, m) {
-
-                //for(var i = 0; i < self.points.length; i++){
-                    if(markedPositionCoord[0] == di.geometry.coordinates[0] 
-                        && markedPositionCoord[1] == di.geometry.coordinates[1]){
-                        found = 1;
-                        console.log("found");
-                        return 1;
-                    }
-              
-                  return 0.2;
-                  
-              })
+        area1.update1([uniqeIdAndRides[idIndex]]) ;
         addLine();
  
         }
@@ -235,6 +232,8 @@ function map(data) {
             strokeWeight: 2
         });
         addLine();
+
+        console.log("done, drawLines")
 
     }
    
@@ -457,8 +456,8 @@ function map(data) {
          // creating a new stucture for the dataset without id, date and hired arrays
         var graphData = [];
 
-        for (var i = 0; i<  600; i++) {
 
+        for (var i = 0; i<  600; i++) {
 
             var id = data[i].ids.split(',');
             var hired = data[i].hired.split(',');

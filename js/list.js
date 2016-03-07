@@ -26,10 +26,19 @@
         //Clear the old list
         detList.clear();
 
+        console.log("start, adding items to list")
+
         data.properties.ids.forEach(function (d, i) {
+            
+            //Check if maximum number of ids have been pushed
+            //Add number of ids
+            if (uniqueID.length == 1500) {
+                var temp = uniqueID.indexOf(data.properties.ids[i]);
+                numberIDs[temp] = numberIDs[temp] + 1;
+            }
             //Check if the id exits in the uniqueID array
             //If not push the id into the array
-            if (uniqueID.length != 1500 && uniqueID.indexOf(data.properties.ids[i]) == -1) {
+            else if (uniqueID.indexOf(data.properties.ids[i]) == -1) {
                 uniqueID.push(data.properties.ids[i]);
                 numberIDs.push(1);
             }
@@ -47,23 +56,36 @@
                 });
         })
 
+        console.log("done, with adding items to list")
+
+        var clickedTaxiStatics = 0;
+
         document.getElementById('detailList').addEventListener('click', function (event) {
             if ('LI' != event.target.tagName) return;
             var temp = event.target.innerText.split(":");
             var temp2 = temp[1].split("\n");
-            console.log(temp2[0]);
+            
             //alert(temp2[0])
             var listID = parseFloat(temp2[0]);
+
+            //send marked pont to the graph
+            console.log("clicked id: ", listID);
 
             uniqueID.indexOf(listID);
             self.marked = true;
             var tempID = 0;
-         //   uniqeIdAndRides.forEach(function (d, i) {
+            console.log("uniqeIdAndRides.length: ", uniqeIdAndRides.length);
+            // search for clicked id in the list
+           // uniqeIdAndRides.forEach(function (d, i) {
+            
+
             for (var i = 0; i < uniqeIdAndRides.length; i++) {
-                 if (uniqeIdAndRides[i].id == listID) {
-                    console.log(i)
+                if (uniqeIdAndRides[i].id == listID) {
+                    console.log("found")
+                    clickedTaxiStatics = uniqeIdAndRides[i];
+                    //area1.update1([uniqeIdAndRides[i]]) ; 
                     map1.click(marker, uniqeIdAndRides, i);
-                    break;
+                   break;
                 }
             }
                 
@@ -71,6 +93,8 @@
            // })
             
         }, false);
+
+        return clickedTaxiStatics;
         
     }
     
