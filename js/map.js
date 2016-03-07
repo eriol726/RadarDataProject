@@ -92,6 +92,8 @@ function map(data) {
     .attr("class", "tooltip")
     .style("opacity", 0);
 
+    //Create new list
+    list1 = new list();
 
     var overlay = new google.maps.OverlayView();
 
@@ -151,8 +153,6 @@ function map(data) {
                     return 3;
             })
 
-
-            list1 = new list();
             // If a point is marked, do this
             marker.on("click", function (d) {
                 list1.update1(d, uniqeIdAndRides, marker);
