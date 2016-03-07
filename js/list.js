@@ -26,10 +26,19 @@
         //Clear the old list
         detList.clear();
 
+        console.log("start, adding items to list")
+
         data.properties.ids.forEach(function (d, i) {
+            
+            //Check if maximum number of ids have been pushed
+            //Add number of ids
+            if (uniqueID.length == 1500) {
+                var temp = uniqueID.indexOf(data.properties.ids[i]);
+                numberIDs[temp] = numberIDs[temp] + 1;
+            }
             //Check if the id exits in the uniqueID array
             //If not push the id into the array
-            if (uniqueID.length != 1500 && uniqueID.indexOf(data.properties.ids[i]) == -1) {
+            else if (uniqueID.indexOf(data.properties.ids[i]) == -1) {
                 uniqueID.push(data.properties.ids[i]);
                 numberIDs.push(1);
             }
@@ -46,6 +55,8 @@
                     numberIDs: "Recurring dates: " + numberIDs[i]
                 });
         })
+
+        console.log("done, with adding items to list")
 
         document.getElementById('detailList').addEventListener('click', function (event) {
             if ('LI' != event.target.tagName) return;

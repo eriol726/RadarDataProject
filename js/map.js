@@ -163,7 +163,7 @@ function map(data) {
                 var idIndex = 0;
 
                 //find index for marked point, if the first id from newStructDatas ids Array exists in dUnique
-                uniqeIdAndRides.forEach( function(dUnique,n){
+                uniqeIdAndRides.forEach(function (dUnique, n) {
                     if(d.properties.ids[0] == dUnique.id ){
                         idIndex = n;
                     }
@@ -229,6 +229,8 @@ function map(data) {
             strokeWeight: 2
         });
         addLine();
+
+        console.log("done, drawLines")
 
     }
    
@@ -451,7 +453,7 @@ function map(data) {
          // creating a new stucture for the dataset without id, date and hired arrays
         var graphData = [];
 
-        for (var i = 0; i<  900; i++) {
+        for (var i = 0; i<  200; i++) {
 
 
             var id = data[i].ids.split(',');
