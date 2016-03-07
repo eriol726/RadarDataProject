@@ -4,19 +4,20 @@ function map(data) {
     //Set threshold for circle radius depending on number of ids (LARGE, LARGER, LARGEST)
     const LARGE = 500, LARGER = 1500, LARGEST = 15000;
 
-
+    // new structure and sorting
     var graphData = prepareGraphData(data);
-
 
     var uniqeIdAndRides = totalCoustumerForTaxi(graphData);
 
     var TotalRidesPerDay = totalCoustumerPerMonth(graphData);
 
+    var area1 = new area(TotalRidesPerDay);
+
      //creating a new data structure for map data
     var newStructData = {type: "FeatureCollection", features: mapData(data)};
     
-    // create a new object array with an other structor 
-    function mapData(array,ridesAndIds ) {
+    // create a new object array with an other structure 
+    function mapData(array ) {
         var newData = [];
         array.map(function (d, i) {
             
@@ -41,7 +42,7 @@ function map(data) {
         return newData;
     }
 
-    var area1 = new area(TotalRidesPerDay);
+    
 
     var mapDiv = $("#map");
 
@@ -427,7 +428,7 @@ function map(data) {
          // creating a new stucture for the dataset without id, date and hired arrays
         var graphData = [];
 
-        for (var i = 0; i<  1000; i++) {
+        for (var i = 0; i<  700; i++) {
 
 
             var id = data[i].ids.split(',');
