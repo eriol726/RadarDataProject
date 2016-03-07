@@ -58,13 +58,17 @@
             uniqueID.indexOf(listID);
             self.marked = true;
             var tempID = 0;
-            uniqeIdAndRides.forEach(function (d, i) {
-                
-                if (d.id == listID) {
+         //   uniqeIdAndRides.forEach(function (d, i) {
+            for (var i = 0; i < uniqeIdAndRides.length; i++) {
+                 if (uniqeIdAndRides[i].id == listID) {
                     console.log(i)
                     map1.click(marker, uniqeIdAndRides, i);
+                    break;
                 }
-            })
+            }
+                
+               
+           // })
             
         }, false);
         

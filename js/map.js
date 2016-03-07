@@ -157,23 +157,26 @@ function map(data) {
             marker.on("click", function (d) {
                 list1.update1(d, uniqeIdAndRides, marker);
                 self.marked = true;
-            if(! (typeof self.flightPath == "undefined")){removeLine();}
 
+                console.log("di coord ", d.geometry.coordinates);
+                var markedPositionCoord = d.geometry.coordinates;
 
                 var idIndex = 0;
 
                 //find index for marked point, if the first id from newStructDatas ids Array exists in dUnique
-                uniqeIdAndRides.forEach( function(dUnique,n){
-                    if(d.properties.ids[0] == dUnique.id ){
-                        idIndex = n;
-                    }
-                });
+                for(var i = 0; i < uniqeIdAndRides.length; i++ ){
+                    if(d.properties.ids[0] == uniqeIdAndRides[i].id ){
+                        idIndex = i;
+                        break;
+                    } 
+                }
+                    
 
-                map1.click(marker, uniqeIdAndRides, idIndex);
-        });
+                map1.click(marker, uniqeIdAndRides, idIndex, markedPositionCoord);
+            });
     }
 
-    self.click = function (marker, uniqeIdAndRides, idIndex) {
+    self.click = function (marker, uniqeIdAndRides, idIndex, markedPositionCoord) {
 
         console.log("id: " + uniqeIdAndRides[idIndex].id)
                            
@@ -182,9 +185,7 @@ function map(data) {
         
         var cc = {};
                    
-        if(! (typeof self.flightPath == "undefined")){removeLine();}
-                    
-           
+                
 
         self.points = area1.lineData(data, uniqeIdAndRides[idIndex].id); 
         var transformedPoints = [];
@@ -196,16 +197,21 @@ function map(data) {
         // console.log("Transformedpoints: " + transformedPoints)
 
                 
-       drawLines(transformedPoints);
+        drawLines(transformedPoints);
 
+        var found = 0;
 
-        marker.selectAll("circle")
-              .style("opacity", function (di) {
-                  for(var i = 0; i < di.properties.ids.length; i++){
-                      if(parseFloat(di.properties.ids[i]) == uniqeIdAndRides[idIndex].id){
-                          return 1;
-                      }
-                  }                          
+        marker.select("circle")
+              .style("opacity", function (di, m) {
+
+                //for(var i = 0; i < self.points.length; i++){
+                    if(markedPositionCoord[0] == di.geometry.coordinates[0] 
+                        && markedPositionCoord[1] == di.geometry.coordinates[1]){
+                        found = 1;
+                        console.log("found");
+                        return 1;
+                    }
+              
                   return 0.2;
                   
               })
@@ -213,7 +219,7 @@ function map(data) {
  
         }
 
-        return
+        
     }
 
     function drawLines(transformedPoints)
@@ -451,7 +457,7 @@ function map(data) {
          // creating a new stucture for the dataset without id, date and hired arrays
         var graphData = [];
 
-        for (var i = 0; i<  900; i++) {
+        for (var i = 0; i<  600; i++) {
 
 
             var id = data[i].ids.split(',');
