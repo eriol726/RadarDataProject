@@ -1,6 +1,6 @@
 function map(data) {
     var self = this;
-    const LINES = 500;
+    const LINES = data.length;
     //Set threshold for circle radius depending on number of ids (LARGE, LARGER, LARGEST)
     const LARGE = 500, LARGER = 1500, LARGEST = 15000;
 
@@ -301,7 +301,7 @@ function map(data) {
                 return 0.05;
               
             })  
-            drawLines(sortByKey(newDrawPoints, "date") );      
+            drawLines(newDrawPoints);      
         }
         else{
             d3.selectAll("circle").style("opacity", function(d) {

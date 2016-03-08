@@ -59,30 +59,30 @@
         console.log("done, with adding items to list")
 
         document.getElementById('detailList').addEventListener('click', function (event) {
-            // run event listener only once
-            event.stopImmediatePropagation();
+        
 
-            //wtf is this?
-            if ('LI' != event.target.tagName) return;
+                // run event listener only once
+                event.stopImmediatePropagation();
+                    
+                var temp = event.target.innerText.split(":");
+                var temp2 = temp[1].split("\n");
+                var listID = parseFloat(temp2[0]);
 
-            var temp = event.target.innerText.split(":");
-            var temp2 = temp[1].split("\n");
-            var listID = parseFloat(temp2[0]);
-
-            self.marked = true;
+                self.marked = true;
 
 
-            for (var i = 0; i < uniqeIdAndRides.length; i++) {
-                if (uniqeIdAndRides[i].id == listID) {
-                    console.log("found id in list")
+                for (var i = 0; i < uniqeIdAndRides.length; i++) {
+                    if (uniqeIdAndRides[i].id == listID) {
+                        console.log("found id in list")
 
-                    //sending clicked id to update the graphs
-                    map1.click(uniqeIdAndRides[i]);
+                        //sending clicked id to update the graphs
+                        map1.click(uniqeIdAndRides[i]);
 
-                   break;
+                       break;
+                    }
                 }
-            }
             
+        
         }, false);
         
     }
