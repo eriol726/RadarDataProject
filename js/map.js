@@ -8,7 +8,7 @@ function map(data) {
     var graphData = prepareGraphData(data);
 
     var uniqeIdAndRides = totalCoustumerForTaxi(graphData);
-    console.log("done, with uniqeIdAndRides");
+    console.log("done, with uniqeIdAndRides, length: ", uniqeIdAndRides.length);
 
     var TotalRidesPerDay = totalCoustumerPerMonth(graphData);
     console.log("done, with TotalRidesPerDay");
@@ -16,30 +16,30 @@ function map(data) {
     var area1 = new area(TotalRidesPerDay);
 
      //creating a new data structure for map data
-    var newStructData = {type: "FeatureCollection", features: mapData(data)};
+    var mapData = {type: "FeatureCollection", features: mapData(data)};
     console.log("done, with structureing mapData");
     
     // create a new object array with an other structure 
-    function mapData(array ) {
+    function mapData(d ) {
         var newData = [];
-        array.map(function (d, i) {
-            
+        
+        for (var i = 0; i < 600; i++) {
 
             newData.push({
                 type: "Feature",
                 geometry: {
                     type: 'Point',
-                    coordinates: [d.x_coord, d.y_coord],
-                    numberOfPoints: d.numberOfPoints
+                    coordinates: [d[i].x_coord, d[i].y_coord],
+                    numberOfPoints: d[i].numberOfPoints
 
                 },
                 "properties" : {
-                "ids" : d.ids.split(','),
-                "date" : d.date.split(','),
-                "hired" : d.hired.split(',')
+                "ids" : d[i].ids.split(','),
+                "date" : d[i].date.split(','),
+                "hired" : d[i].hired.split(',')
                 }
             });
-        });
+        };
 
         return newData;
     }
@@ -111,7 +111,7 @@ function map(data) {
                   padding = 10;
 
             var marker = layer.selectAll("svg")
-                  .data(newStructData.features)
+                  .data(mapData.features)
                   .each(transform) // update existing markers
                   .enter().append("svg")
                   .each(transform)

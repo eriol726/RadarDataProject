@@ -60,25 +60,29 @@
 
 
         document.getElementById('detailList').addEventListener('click', function (event) {
+            // run event listener only once
+            event.stopPropagation();
+
+            //wtf is this?
             if ('LI' != event.target.tagName) return;
+            
             var temp = event.target.innerText.split(":");
             var temp2 = temp[1].split("\n");
-            
-            //alert(temp2[0])
             var listID = parseFloat(temp2[0]);
 
             //send marked pont to the graph
             console.log("clicked id: ", listID);
 
-            uniqueID.indexOf(listID);
+
             self.marked = true;
-            var tempID = 0;
+
 
             for (var i = 0; i < uniqeIdAndRides.length; i++) {
                 if (uniqeIdAndRides[i].id == listID) {
                     console.log("found id in list")
 
                     map1.click(uniqeIdAndRides[i]);
+
                    break;
                 }
             }
