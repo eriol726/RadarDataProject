@@ -1,6 +1,6 @@
 function map(data) {
     var self = this;
-    const LINES = 800;
+    const LINES = 700;
     //Set threshold for circle radius depending on number of ids (LARGE, LARGER, LARGEST)
     const LARGE = 500, LARGER = 1500, LARGEST = 15000;
 
@@ -182,9 +182,18 @@ function map(data) {
                         return 1;
                     }
               
-                return 0.2;
+                return 0.1;
                   
-              })
+                 })
+               marker.select("circle")
+                    .style("fill", function (di, m) {
+                    if(d.geometry.coordinates[0] == di.geometry.coordinates[0] 
+                        && d.geometry.coordinates[1] == di.geometry.coordinates[1]){
+                        console.log("found point");
+                        return "red";
+                    }
+                    return "orange";
+                 })
             });
     }
 
@@ -279,20 +288,20 @@ function map(data) {
         var endTime = value[1].getTime();
 
 
-        
+        var newDrawPoints = [];           
+
 
         if(self.marked){
-            var newDrawPoints = [];           
             d3.selectAll("circle").style("opacity", function(d) {
                 
                 for(var i = 0; i < self.points.length; i++){
                     if(self.points[i].x_coord == d.geometry.coordinates[0] 
                     && self.points[i].y_coord == d.geometry.coordinates[1]){
-                        var time = new Date(d.properties.dates[i]);
+                        var time = new Date(self.points[i].date);
 
                         if(startTime <= time.getTime() && time.getTime() <= endTime){
-                            newDrawPoints.push({lat: self.points[i].y_coord, lng: self.points[i].x_coord, date: d.properties.dates[i]});
-                            return 1;
+                            newDrawPoints.push({lat: self.points[i].y_coord, lng: self.points[i].x_coord, date: self.points[i].date});
+                            return 0.1;
                         } 
                     }
                 }
@@ -301,7 +310,8 @@ function map(data) {
                 return 0.05;
               
             })  
-            drawLines(newDrawPoints);      
+            drawLines(sortByKey(newDrawPoints, "date" ));      
+
         }
         else{
             d3.selectAll("circle").style("opacity", function(d) {
@@ -317,7 +327,8 @@ function map(data) {
                 return 0;
             
             });
-        }      
+        }
+      
     };
 
 
