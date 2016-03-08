@@ -10,13 +10,13 @@
 
     //Dummy list item
     var values = [{
-        id: 'ID: ...',
-        numberIDs: "Recurring dates: ..."
+        id: 'Taxi ID: ...',
+        numberIDs: "Number of occurrences: ..."
     }];
 
     //New detailList
     var detList = new List('detailList', options, values);
-
+    
     //------------------------------------------------------------------------------------------
     this.update = function draw(data, uniqeIdAndRides, marker) {
        
@@ -52,12 +52,11 @@
         uniqueID.forEach(function (d, i) {
             detList.add({
                     id: "Taxi ID: " + uniqueID[i],
-                    numberIDs: "Recurring dates: " + numberIDs[i]
+                    numberIDs: "Number of occurrences: " + numberIDs[i]
                 });
         })
 
         console.log("done, with adding items to list")
-
 
         document.getElementById('detailList').addEventListener('click', function (event) {
             // run event listener only once

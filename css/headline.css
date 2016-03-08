@@ -1,0 +1,20 @@
+﻿h2 {
+  font-size: 23px;
+  font-weight: normal;
+  margin-left: 20px;
+}
+.reset {
+  padding:8px 30px;
+  border-radius: 6px;
+  border:none;
+  display:inline-block;
+  color:#fff;
+  text-decoration: none;
+  background-color: #808080;
+  height:5vh; 
+  margin-left: 150px;
+}
+.reset:hover {
+  text-decoration: none;
+  background-color:#aaa;
+}
