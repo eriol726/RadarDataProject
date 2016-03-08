@@ -1,6 +1,6 @@
 function map(data) {
     var self = this;
-
+    const LINES = 600;
     //Set threshold for circle radius depending on number of ids (LARGE, LARGER, LARGEST)
     const LARGE = 500, LARGER = 1500, LARGEST = 15000;
 
@@ -23,7 +23,7 @@ function map(data) {
     function mapData(d ) {
         var newData = [];
         
-        for (var i = 0; i < 600; i++) {
+        for (var i = 0; i < LINES; i++) {
 
             newData.push({
                 type: "Feature",
@@ -159,15 +159,12 @@ function map(data) {
                 //sending information from marked point to the update list function
                 list1.update(d, uniqeIdAndRides, marker);
                 self.marked = true;
-
-
-                var markedPositionCoord = d.geometry.coordinates;
                     
                 // find marked circle and highlight it
                 marker.select("circle")
                .style("opacity", function (di, m) {
-                    if(markedPositionCoord[0] == di.geometry.coordinates[0] 
-                        && markedPositionCoord[1] == di.geometry.coordinates[1]){
+                    if(d.geometry.coordinates[0] == di.geometry.coordinates[0] 
+                        && d.geometry.coordinates[1] == di.geometry.coordinates[1]){
                         console.log("found point");
                         return 1;
                     }
@@ -194,9 +191,7 @@ function map(data) {
                 
         drawLines(transformedPoints);
 
-
-        console.log("clickedTaxiStatics", clickedTaxiStatics)
-
+        //updating graph
         area1.update1(clickedTaxiStatics) ;
         addLine();
  
@@ -472,7 +467,7 @@ function map(data) {
         var graphData = [];
 
 
-        for (var i = 0; i<  600; i++) {
+        for (var i = 0; i<  LINES; i++) {
 
             var id = data[i].ids.split(',');
             var hired = data[i].hired.split(',');

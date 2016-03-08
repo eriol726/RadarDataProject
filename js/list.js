@@ -65,14 +65,10 @@
 
             //wtf is this?
             if ('LI' != event.target.tagName) return;
-            
+
             var temp = event.target.innerText.split(":");
             var temp2 = temp[1].split("\n");
             var listID = parseFloat(temp2[0]);
-
-            //send marked pont to the graph
-            console.log("clicked id: ", listID);
-
 
             self.marked = true;
 
@@ -81,6 +77,7 @@
                 if (uniqeIdAndRides[i].id == listID) {
                     console.log("found id in list")
 
+                    //sending clicked id to update the graphs
                     map1.click(uniqeIdAndRides[i]);
 
                    break;
