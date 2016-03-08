@@ -1,8 +1,4 @@
 
-
-
-
-
 function gridClustering(data){
 var stepX = 0;
 	var stepY = 0;
@@ -78,8 +74,8 @@ var stepX = 0;
 					centroidX[n][j] = centroidX[n][j]/nrPointsInGrid;
 					centroidY[n][j] = centroidY[n][j]/nrPointsInGrid;
 					
-					var coord = {lat: centroidY[n][j], lng: centroidX[n][j], nrPoints:nrPointsInGrid,ids:ids, date: timeStamp,hired:hired};
-					centroidPoints.push(coord);
+					var coord =[ ["lat", centroidY[n][j] ][, "lng", centroidX[n][j] ][ "nrPoints",nrPointsInGrid][ "ids",:ids][] "date", timeStamp]["hired",hired] ];
+					centroidPoints[j] = coord;
 
 			}
 		}
@@ -98,5 +94,5 @@ var stepX = 0;
 }
 
 function exportData(centroidPoints) {
-     alasql("SELECT * INTO CSV('cities.csv') FROM ?",[centroidPoints]);
+     alasql("SELECT * INTO CSV('clusteredCoords.csv') FROM ?",[centroidPoints]);
 }

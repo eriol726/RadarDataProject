@@ -51,7 +51,7 @@
 
         uniqueID.forEach(function (d, i) {
             detList.add({
-                    id: "ID: " + uniqueID[i],
+                    id: "Taxi ID: " + uniqueID[i],
                     numberIDs: "Recurring dates: " + numberIDs[i]
                 });
         })
@@ -61,7 +61,7 @@
 
         document.getElementById('detailList').addEventListener('click', function (event) {
             // run event listener only once
-            event.stopPropagation();
+            event.stopImmediatePropagation();
 
             //wtf is this?
             if ('LI' != event.target.tagName) return;
