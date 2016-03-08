@@ -158,6 +158,8 @@ function map(data) {
 
                 //removing lines when point is changed
                 if(! (typeof self.flightPath == "undefined")){removeLine();}
+                //cleaning graph when new point is marked
+                area1.update1({id: 0, month: creatMonthArray()}) ;
 
                 //sending information from marked point to the update list function
                 list1.update(d, uniqeIdAndRides, marker);
