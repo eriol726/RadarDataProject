@@ -157,10 +157,10 @@ function map(data) {
             marker.on("click", function (d) {
 
                 //sending information from marked point to the update list function
-                var clickedTaxi = list1.update1(d, uniqeIdAndRides, marker);
+                list1.update(d, uniqeIdAndRides, marker);
                 self.marked = true;
 
-                console.log("clickedTaxi: ", clickedTaxi);
+
                 var markedPositionCoord = d.geometry.coordinates;
                     
                 // find marked circle and highlight it
@@ -168,8 +168,7 @@ function map(data) {
                .style("opacity", function (di, m) {
                     if(markedPositionCoord[0] == di.geometry.coordinates[0] 
                         && markedPositionCoord[1] == di.geometry.coordinates[1]){
-                        found = 1;
-                        console.log("found");
+                        console.log("found point");
                         return 1;
                     }
               
@@ -179,7 +178,7 @@ function map(data) {
             });
     }
 
-    self.click = function (marker, uniqeIdAndRides, clickedTaxiStatics) {
+    self.click = function ( clickedTaxiStatics) {
 
         
         var cc = {};

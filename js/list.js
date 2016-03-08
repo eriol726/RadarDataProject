@@ -18,7 +18,7 @@
     var detList = new List('detailList', options, values);
 
     //------------------------------------------------------------------------------------------
-    this.update1 = function draw(data, uniqeIdAndRides, marker) {
+    this.update = function draw(data, uniqeIdAndRides, marker) {
        
         var uniqueID = [];
         var numberIDs = [];
@@ -58,7 +58,6 @@
 
         console.log("done, with adding items to list")
 
-        var clickedTaxiStatics = 0;
 
         document.getElementById('detailList').addEventListener('click', function (event) {
             if ('LI' != event.target.tagName) return;
@@ -74,27 +73,17 @@
             uniqueID.indexOf(listID);
             self.marked = true;
             var tempID = 0;
-            console.log("uniqeIdAndRides.length: ", uniqeIdAndRides.length);
-            // search for clicked id in the list
-           // uniqeIdAndRides.forEach(function (d, i) {
-            
 
             for (var i = 0; i < uniqeIdAndRides.length; i++) {
                 if (uniqeIdAndRides[i].id == listID) {
-                    console.log("found")
+                    console.log("found id in list")
 
-                    //area1.update1([uniqeIdAndRides[i]]) ; 
-                    map1.click(marker, uniqeIdAndRides, uniqeIdAndRides[i]);
+                    map1.click(uniqeIdAndRides[i]);
                    break;
                 }
             }
-                
-               
-           // })
             
         }, false);
-
-        return clickedTaxiStatics;
         
     }
     
