@@ -1,6 +1,6 @@
 function map(data) {
     var self = this;
-    const LINES = 500;
+    const LINES = 600;
     //Set threshold for circle radius depending on number of ids (LARGE, LARGER, LARGEST)
     const LARGE = 500, LARGER = 1500, LARGEST = 15000;
 
@@ -156,6 +156,9 @@ function map(data) {
             // If a point is marked, do this
             marker.on("click", function (d) {
 
+                //Returning a "help label" if point is marked
+                document.getElementById("graphRubrik").innerHTML="<h2>Choose a Taxi ID</h2>";
+
                 //removing lines when point is changed
                 if(! (typeof self.flightPath == "undefined")){removeLine();}
                 //cleaning graph when new point is marked
@@ -183,9 +186,6 @@ function map(data) {
     self.click = function ( clickedTaxiStatics) {
 
         
-        var cc = {};
-        
-        console.log("mapData: ", mapData);
 
         self.points = lineData(mapData.features, clickedTaxiStatics.id); 
         var transformedPoints = [];
@@ -197,6 +197,9 @@ function map(data) {
 
                 
         drawLines(transformedPoints);
+
+        //Returning a new label if id is marked
+        document.getElementById("graphRubrik").innerHTML="<h2>Total Customers per taxi</h2>";
 
         //updating graph
         area1.update1(clickedTaxiStatics) ;
