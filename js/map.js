@@ -1,7 +1,7 @@
 function map(data) {
     var self = this;
 
-    const LINES = data.length;
+    const LINES = 600;
     //Set threshold for circle radius depending on number of ids (LARGE, LARGER, LARGEST)
     const LARGE = 500, LARGER = 1500, LARGEST = 15000;
 
@@ -10,6 +10,7 @@ function map(data) {
 
     var uniqeIdAndRides = totalCoustumerForTaxi(graphData);
     console.log("done, with uniqeIdAndRides, length: ", uniqeIdAndRides.length);
+    list1 = new list();
 
     var TotalRidesPerDay = totalCoustumerPerMonth(graphData);
     console.log("done, with TotalRidesPerDay");
@@ -25,7 +26,8 @@ function map(data) {
         self.marked = false;
         if(! (typeof self.flightPath == "undefined")){removeLine();}
         d3.selectAll("circle").style("opacity",1).style("fill","orange")
-        document.getElementById("graphRubrik").innerHTML="<h2>Total Customers per day</h2>"
+        document.getElementById("graphRubrik").innerHTML="<h2>Total Customers per day</h2>";
+        list1.detList.clear();
 
 
     });
@@ -98,7 +100,6 @@ function map(data) {
     });
 
     //Create new id-list in the layout
-    list1 = new list();
 
     var overlay = new google.maps.OverlayView();
 

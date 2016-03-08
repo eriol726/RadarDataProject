@@ -15,7 +15,7 @@
     }];
 
     //New detailList
-    var detList = new List('detailList', options, values);
+    self.detList = new List('detailList', options, values);
     
     //------------------------------------------------------------------------------------------
     this.update = function draw(data, uniqeIdAndRides, marker) {
@@ -24,7 +24,7 @@
         var numberIDs = [];
 
         //Clear the old list
-        detList.clear();
+        self.detList.clear();
 
         console.log("start, adding items to list")
 
@@ -50,7 +50,7 @@
         })
 
         uniqueID.forEach(function (d, i) {
-            detList.add({
+            self.detList.add({
                     id: "Taxi ID: " + uniqueID[i],
                     numberIDs: "Number of occurrences: " + numberIDs[i]
                 });
