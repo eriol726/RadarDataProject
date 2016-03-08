@@ -16,6 +16,10 @@
   text-decoration: none;
   background-color:#808080;
 }
+.list > li:active {
+  background-color:black;
+}
+
 .avatar {
   max-width: 150px;
 }
@@ -55,10 +59,11 @@ input:focus {
 }
 .sort:hover {
   text-decoration: none;
-  background-color:#aaa;
+  background-color:orange;
 }
 .sort:focus {
   outline:none;
+  background-color: orange;
 }
 .sort:after {
   width: 0;
@@ -104,3 +109,4 @@ input:focus {
     overflow: scroll;
     overflow-x: hidden;
 }
+

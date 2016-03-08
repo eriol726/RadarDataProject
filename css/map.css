@@ -27,19 +27,6 @@
   stroke-width: 1.5px;
 }
 
-div.tooltip {	
-    position: absolute;			
-    text-align: center;			
-    width: 100px;					
-    height: 128px;					
-    padding: 2px;				
-    font: 12px sans-serif;		
-    background: #f0f0f0; /*Change backgoround color*/	
-    border: 3px solid grey;		
-    border-radius: 2px; /*Curve the corners*/			
-    pointer-events: none;			
-}
-
 #dot {
       width: 8px;
       height: 8px;

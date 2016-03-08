@@ -16,5 +16,8 @@
 }
 .reset:hover {
   text-decoration: none;
-  background-color:#aaa;
+  background-color:orange;
+}
+.reset:focus {
+    outline:none;
 }
