@@ -214,8 +214,6 @@ function map(data) {
             })
             
         }
-
-        console.log("idArray", lineData);
     
         sortByKey(lineData, "date") 
     
@@ -287,10 +285,11 @@ function map(data) {
                     }
                 }
 
-                drawLines(sortByKey(newDrawPoints, "date") );
+                
                 return 0.05;
               
-            })        
+            })  
+            drawLines(sortByKey(newDrawPoints, "date") );      
         }
         else{
             d3.selectAll("circle").style("opacity", function(d) {
