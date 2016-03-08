@@ -97,12 +97,6 @@ function map(data) {
         mapTypeId: google.maps.MapTypeId.TERRAIN
     });
 
-
-    //Define tooltip div
-    var div = d3.select("body").append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0);
-
     //Create new id-list in the layout
     list1 = new list();
 
