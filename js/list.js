@@ -16,7 +16,7 @@
 
     //New detailList
     var detList = new List('detailList', options, values);
-
+    
     //------------------------------------------------------------------------------------------
     this.update = function draw(data, uniqeIdAndRides, marker) {
        
@@ -57,7 +57,6 @@
         })
 
         console.log("done, with adding items to list")
-
 
         document.getElementById('detailList').addEventListener('click', function (event) {
             // run event listener only once

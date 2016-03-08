@@ -18,7 +18,15 @@ function map(data) {
      //creating a new data structure for map data
     var mapData = {type: "FeatureCollection", features: mapData(data)};
     console.log("done, with structureing mapData");
-    
+   
+    document.getElementById("reset").addEventListener("click", function(){
+        area1.update2(TotalRidesPerDay);
+        self.marked = false;
+        if(! (typeof self.flightPath == "undefined")){removeLine();}
+        d3.selectAll("circle").style("opacity",1)
+
+    });
+   
     // create a new object array with an other structure 
     function mapData(d ) {
         var newData = [];

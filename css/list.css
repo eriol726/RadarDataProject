@@ -4,7 +4,7 @@
 
 .list {
   font-family:sans-serif;
-  padding:5px 20px 0;
+  padding:5px 20px 0 ;
 }
 .list > li {
   display:block;
