@@ -35,7 +35,7 @@ function map(data) {
                 },
                 "properties" : {
                 "ids" : d[i].ids.split(','),
-                "date" : d[i].date.split(','),
+                "dates" : d[i].date.split(','),
                 "hired" : d[i].hired.split(',')
                 }
             });
@@ -179,8 +179,10 @@ function map(data) {
 
         
         var cc = {};
-                      
-        self.points = lineData(data, clickedTaxiStatics.id); 
+        
+        console.log("mapData: ", mapData);
+
+        self.points = lineData(mapData.features, clickedTaxiStatics.id); 
         var transformedPoints = [];
 
         self.points.forEach(function(d){
@@ -203,16 +205,17 @@ function map(data) {
     function lineData(data, id){
         var lineData = [];
         for(var i = 0; i < data.length; i++){
-            
-            var idArray = data[i].ids.split(',');
-            var timeArray = data[i].date.split(',');
+            var idArray = data[i].properties.ids;
+            var timeArray = data[i].properties.dates;
             idArray.forEach(function(d,j){
                 if(id == parseFloat(d)){
-                    lineData.push({x_coord:parseFloat(data[i].x_coord),y_coord: parseFloat(data[i].y_coord), date:timeArray[j]});
+                    lineData.push({x_coord:parseFloat(data[i].geometry.coordinates[0]),y_coord: parseFloat(data[i].geometry.coordinates[1]), date:timeArray[j]});
                 }
             })
             
         }
+
+        console.log("idArray", lineData);
     
         sortByKey(lineData, "date") 
     
@@ -274,10 +277,10 @@ function map(data) {
                 for(var i = 0; i < self.points.length; i++){
                     if(self.points[i].x_coord == d.geometry.coordinates[0] 
                     && self.points[i].y_coord == d.geometry.coordinates[1]){
-                        var time = new Date(d.properties.date[i]);
+                        var time = new Date(d.properties.dates[i]);
 
                         if(startTime <= time.getTime() && time.getTime() <= endTime){
-                            newDrawPoints.push({lat: self.points[i].y_coord, lng: self.points[i].x_coord, date: d.properties.date[i]});
+                            newDrawPoints.push({lat: self.points[i].y_coord, lng: self.points[i].x_coord, date: d.properties.dates[i]});
                             return 1;
 
                         } 
@@ -293,8 +296,8 @@ function map(data) {
             d3.selectAll("circle").style("opacity", function(d) {
 
                 
-                for (var i = 0; i < d.properties.date.length; i++){
-                    var time = new Date(d.properties.date[i]);
+                for (var i = 0; i < d.properties.dates.length; i++){
+                    var time = new Date(d.properties.dates[i]);
 
                     if(startTime <= time.getTime() && time.getTime() <= endTime){
                         return 1;
