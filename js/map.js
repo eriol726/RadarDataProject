@@ -25,6 +25,8 @@ function map(data) {
         self.marked = false;
         if(! (typeof self.flightPath == "undefined")){removeLine();}
         d3.selectAll("circle").style("opacity",1)
+        document.getElementById("graphRubrik").innerHTML="<h2>Total Customers per day</h2>"
+
 
     });
    
