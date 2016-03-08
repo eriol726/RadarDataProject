@@ -156,6 +156,9 @@ function map(data) {
             // If a point is marked, do this
             marker.on("click", function (d) {
 
+                //removing lines when point is changed
+                if(! (typeof self.flightPath == "undefined")){removeLine();}
+
                 //sending information from marked point to the update list function
                 list1.update(d, uniqeIdAndRides, marker);
                 self.marked = true;
