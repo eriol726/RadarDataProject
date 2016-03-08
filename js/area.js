@@ -16,7 +16,7 @@ function area(aData) {
    
 
 
-    var margin = { top: 20, right: 40, bottom: 40, left: 40 },
+    var margin = { top: 5, right: 40, bottom: 40, left: 40 },
         margin2 = { top: 10, right: 40, bottom: 20, left: 40 },
 
         width = areaDivBig.width() - margin.left - margin.right,
