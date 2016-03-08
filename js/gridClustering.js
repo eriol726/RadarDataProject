@@ -1,8 +1,3 @@
-
-
-
-
-
 function gridClustering(data){
 var stepX = 0;
 	var stepY = 0;

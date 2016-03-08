@@ -10,8 +10,8 @@
 
     //Dummy list item
     var values = [{
-        id: 'ID: ...',
-        numberIDs: "Recurring dates: ..."
+        id: 'Taxi ID: ...',
+        numberIDs: "Number of occurrences: ..."
     }];
 
     //New detailList
@@ -52,7 +52,7 @@
         uniqueID.forEach(function (d, i) {
             detList.add({
                     id: "Taxi ID: " + uniqueID[i],
-                    numberIDs: "Recurring dates: " + numberIDs[i]
+                    numberIDs: "Number of occurrences: " + numberIDs[i]
                 });
         })
 

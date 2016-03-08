@@ -21,6 +21,7 @@
         <link rel="stylesheet" href="css/area.css">
         <link rel="stylesheet" href="css/map.css">
         <link rel="stylesheet" href="css/list.css">
+        <link rel="stylesheet" href="css/headline.css">
 
     </head>
     
@@ -63,7 +64,10 @@
 
                 <div class="row">
                     <div class="col-md-6" id ="map" style ="height: 80vh"></div>
-                    <h2>Taxi IDs in selected point  <button type="button" id="reset" style="height: 5vh; margin-left: 280px ">Reset</button></h2>
+                    <div class="col-md-6" id ="headline" style ="height: 8vh">
+                        <h2>Taxi IDs in a selected point  
+                        <button class="reset" type="button" id="reset" >Reset</button></h2>
+                    </div>
 
                     <div class="col-md-6" id="detailList" style="height: 40vh; margin-top: 5px ">
                         <input class="search" placeholder="Search" />
@@ -71,7 +75,7 @@
                             Sort by id
                         </button>
                         <button class="sort" data-sort="numberIDs">
-                            Sort by number of dates
+                            Sort by number of occurrences
                         </button>
                         <ul class="list"></ul>
 
@@ -82,6 +86,15 @@
                     <div class="col-md-12" id ="areaSmall" style ="height: 10vh"></div>     
                 </div>                
             </div>
+
+            <footer>
+                <p>Posted by: Hege Refsnes</p>
+                <p>
+                    Contact information: <a href="mailto:someone@example.com">
+                        someone@example.com
+                    </a>.
+                </p>
+            </footer>
         </div>
 
         <script src="js/vendor/jquery.min.js"></script>
