@@ -61,7 +61,7 @@
 
         document.getElementById('detailList').addEventListener('click', function (event) {
             // run event listener only once
-            event.stopPropagation();
+            event.stopImmediatePropagation();
 
             //wtf is this?
             if ('LI' != event.target.tagName) return;
