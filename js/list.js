@@ -82,9 +82,9 @@
             for (var i = 0; i < uniqeIdAndRides.length; i++) {
                 if (uniqeIdAndRides[i].id == listID) {
                     console.log("found")
-                    clickedTaxiStatics = uniqeIdAndRides[i];
+
                     //area1.update1([uniqeIdAndRides[i]]) ; 
-                    map1.click(marker, uniqeIdAndRides, i);
+                    map1.click(marker, uniqeIdAndRides, uniqeIdAndRides[i]);
                    break;
                 }
             }

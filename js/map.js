@@ -92,7 +92,7 @@ function map(data) {
     .attr("class", "tooltip")
     .style("opacity", 0);
 
-    //Create new list
+    //Create new id-list in the layout
     list1 = new list();
 
     var overlay = new google.maps.OverlayView();
@@ -156,27 +156,16 @@ function map(data) {
             // If a point is marked, do this
             marker.on("click", function (d) {
 
+                //sending information from marked point to the update list function
                 var clickedTaxi = list1.update1(d, uniqeIdAndRides, marker);
                 self.marked = true;
 
                 console.log("clickedTaxi: ", clickedTaxi);
                 var markedPositionCoord = d.geometry.coordinates;
-
-                var idIndex = 0;
-
-                //find index for marked point, if the first id from newStructDatas ids Array exists in dUnique
-                for(var i = 0; i < uniqeIdAndRides.length; i++ ){
-                    if(d.properties.ids[0] == uniqeIdAndRides[i].id ){
-                        idIndex = i;
-                        break;
-                    } 
-                }
                     
-
-               marker.select("circle")
-              .style("opacity", function (di, m) {
-
-                //for(var i = 0; i < self.points.length; i++){
+                // find marked circle and highlight it
+                marker.select("circle")
+               .style("opacity", function (di, m) {
                     if(markedPositionCoord[0] == di.geometry.coordinates[0] 
                         && markedPositionCoord[1] == di.geometry.coordinates[1]){
                         found = 1;
@@ -184,40 +173,67 @@ function map(data) {
                         return 1;
                     }
               
-                  return 0.2;
+                return 0.2;
                   
               })
             });
     }
 
-    self.click = function (marker, uniqeIdAndRides, idIndex, markedPositionCoord) {
+    self.click = function (marker, uniqeIdAndRides, clickedTaxiStatics) {
 
         
         var cc = {};
-                   
-                
-
-        self.points = area1.lineData(data, uniqeIdAndRides[idIndex].id); 
+                      
+        self.points = lineData(data, clickedTaxiStatics.id); 
         var transformedPoints = [];
 
         self.points.forEach(function(d){
             var coord = {lat: d.y_coord, lng: d.x_coord};
             transformedPoints.push(coord);
         })
-        // console.log("Transformedpoints: " + transformedPoints)
 
                 
         drawLines(transformedPoints);
 
-        var found = 0;
 
-        area1.update1([uniqeIdAndRides[idIndex]]) ;
+        console.log("clickedTaxiStatics", clickedTaxiStatics)
+
+        area1.update1(clickedTaxiStatics) ;
         addLine();
  
         }
 
         
     }
+
+    function lineData(data, id){
+        var lineData = [];
+        for(var i = 0; i < data.length; i++){
+            
+            var idArray = data[i].ids.split(',');
+            var timeArray = data[i].date.split(',');
+            idArray.forEach(function(d,j){
+                if(id == parseFloat(d)){
+                    lineData.push({x_coord:parseFloat(data[i].x_coord),y_coord: parseFloat(data[i].y_coord), date:timeArray[j]});
+                }
+            })
+            
+        }
+    
+        sortByKey(lineData, "date") 
+    
+      
+        return lineData;
+
+    }
+    
+    function sortByKey(array, key) {
+        return array.sort(function(a, b) {
+            var x = a[key]; var y = b[key];
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        });
+    }
+
 
     function drawLines(transformedPoints)
     {
@@ -248,7 +264,7 @@ function map(data) {
     });
 
 
-      this.filterTime = function (value) {
+    this.filterTime = function (value) {
         
 
         var startTime = value[0].getTime();
@@ -274,7 +290,7 @@ function map(data) {
                     }
                 }
 
-                drawLines(area1.sortByKey(newDrawPoints, "date") );
+                drawLines(sortByKey(newDrawPoints, "date") );
                 return 0.05;
               
             })        
@@ -283,17 +299,17 @@ function map(data) {
             d3.selectAll("circle").style("opacity", function(d) {
 
                 
-            for (var i = 0; i < d.properties.date.length; i++){
-                var time = new Date(d.properties.date[i]);
+                for (var i = 0; i < d.properties.date.length; i++){
+                    var time = new Date(d.properties.date[i]);
 
-                if(startTime <= time.getTime() && time.getTime() <= endTime){
-                    return 1;
-                }           
-            }
-            return 0;
+                    if(startTime <= time.getTime() && time.getTime() <= endTime){
+                        return 1;
+                    }           
+                }
+                return 0;
             
-          });
-      }      
+            });
+        }      
     };
 
 
@@ -446,9 +462,9 @@ function map(data) {
 
         }
         // must do this for being able to call d.month in area()
-        totalIds.push({id: 1, month: monthObject});
 
-      return totalIds
+
+      return monthObject;
         
     }   
 

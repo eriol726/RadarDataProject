@@ -100,8 +100,8 @@ function area(aData) {
             .attr("transform", "translate(" + margin2.left + "," +  margin2.top + ")");
 
     //Initializes the axis domains for the big chart
-    x.domain(dimensions = d3.extent(aData[0].month.map(function(d) {  return format(d.date); })));
-    y.domain(dimensions2 = d3.extent(aData[0].month.map(function(d) { return parseFloat(d.rides); })));
+    x.domain(dimensions = d3.extent(aData.map(function(d) {  return format(d.date); })));
+    y.domain(dimensions2 = d3.extent(aData.map(function(d) { return parseFloat(d.rides); })));
     //Initializes the axis domains for the small chart
     x2.domain(x.domain());
     y2.domain(y.domain());
@@ -109,7 +109,7 @@ function area(aData) {
     //console.log(data.features)
     //Appends the big chart to the focus area
     focus.append("path")
-            .datum(aData[0].month)
+            .datum(aData)
             .attr("clip-path", "url(#clip)")
             .attr("d", area);
     
@@ -126,7 +126,7 @@ function area(aData) {
 
     //Appends the small chart to the focus area        
     context.append("path")
-            .datum(aData[0].month)
+            .datum(aData)
             .attr("d", area2);
     
     //Appends the x axis 
@@ -158,41 +158,11 @@ function area(aData) {
         map1.filterTime(brush.extent());
     }
 
-
-
-    this.lineData = function(data, id){
-        var lineData = [];
-        for(var i = 0; i < data.length; i++){
-            
-            var idArray = data[i].ids.split(',');
-            var timeArray = data[i].date.split(',');
-            idArray.forEach(function(d,j){
-                if(id == parseFloat(d)){
-                    lineData.push({x_coord:parseFloat(data[i].x_coord),y_coord: parseFloat(data[i].y_coord), date:timeArray[j]});
-                }
-            })
-            
-        }
-    
-    self.sortByKey(lineData, "date") 
-    
-      
-    return lineData;
-
-    }
-    
-    self.sortByKey = function(array, key) {
-        return array.sort(function(a, b) {
-            var x = a[key]; var y = b[key];
-            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-        });
-    }
-
     this.update1 = function(data){
 
     //Initializes the axis domains for the big chart
-    x.domain(dimensions = d3.extent(data[0].month.map(function(d) {  return format(d.date); })));
-    y.domain(dimensions2 = d3.extent(data[0].month.map(function(d) { return parseFloat(d.rides); })));
+    x.domain(dimensions = d3.extent(data.month.map(function(d) {  return format(d.date); })));
+    y.domain(dimensions2 = d3.extent(data.month.map(function(d) { return parseFloat(d.rides); })));
     //Initializes the axis domains for the small chart
     x2.domain(x.domain());
     y2.domain(y.domain());
@@ -209,7 +179,7 @@ function area(aData) {
             .attr("class", "x axis").remove()
 
     focus.append("path")
-            .datum(data[0].month)
+            .datum(data.month)
             .attr("clip-path", "url(#clip)")
             .attr("d", area);
     
@@ -229,7 +199,7 @@ function area(aData) {
 
     //Appends the small chart to the focus area        
     context.append("path")
-            .datum(data[0].month)
+            .datum(data.month)
             .attr("d", area2);
     
     //Appends the x axis 
