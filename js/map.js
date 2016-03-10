@@ -1,7 +1,7 @@
 function map(data) {
     var self = this;
 
-    const LINES = 600;
+    const LINES = data.length;
     //Set threshold for circle radius depending on number of ids (LARGE, LARGER, LARGEST)
     const LARGE = 500, LARGER = 1500, LARGEST = 15000;
 
@@ -24,7 +24,7 @@ function map(data) {
     document.getElementById("reset").addEventListener("click", function(){
         area1.update2(TotalRidesPerDay);
         self.marked = false;
-        if(! (typeof self.flightPath == "undefined")){removeLine();}
+        if(! (typeof self.travelPath == "undefined")){removeLine();}
         d3.selectAll("circle").style("opacity",1).style("fill","orange")
         document.getElementById("graphRubrik").innerHTML="<h2>Total Customers per day</h2>";
         list1.detList.clear();
@@ -107,7 +107,7 @@ function map(data) {
     overlay.onAdd = function() {
         var layer = d3.select(this.getPanes().overlayMouseTarget).append("div")
             .attr("class", "stations");
-        if(! (typeof self.flightPath == "undefined")){removeLine();}
+        if(! (typeof self.travelPath == "undefined")){removeLine();}
 
 
         // Draw each marker as a separate SVG element.
@@ -166,7 +166,7 @@ function map(data) {
                 document.getElementById("graphRubrik").innerHTML="<h2>Choose a Taxi ID</h2>";
 
                 //removing lines when point is changed
-                if(! (typeof self.flightPath == "undefined")){removeLine();}
+                if(! (typeof self.travelPath == "undefined")){removeLine();}
                 //cleaning graph when new point is marked
                 area1.update1({id: 0, month: creatMonthArray()}) ;
 
@@ -213,7 +213,7 @@ function map(data) {
                 
         drawLines(transformedPoints);
 
-        //Returning a new label if id is marked
+        //Returning a new label if it is marked
         document.getElementById("graphRubrik").innerHTML="<h2>Total Customers per taxi</h2>";
 
         //updating graph
@@ -224,7 +224,7 @@ function map(data) {
 
         
     }
-
+    //return the pints that are used to draw lines
     function lineData(data, id){
         var lineData = [];
         for(var i = 0; i < data.length; i++){
@@ -256,9 +256,9 @@ function map(data) {
     function drawLines(transformedPoints)
     {
 
-        if(! (typeof self.flightPath == "undefined")){removeLine();}
+        if(! (typeof self.travelPath == "undefined")){removeLine();}
 
-        self.flightPath = new google.maps.Polyline({
+        self.travelPath = new google.maps.Polyline({
             path: transformedPoints,
             geodesic: true,
             strokeColor: '#f03b20',
@@ -276,7 +276,7 @@ function map(data) {
     overlay.setMap(map);
  
 
-    //Calls the filtering function 
+    //Calls the filtering function
     d3.select("#slider").on("input", function () {
         filterMag(this.value, data);
     });
@@ -291,7 +291,7 @@ function map(data) {
 
         var newDrawPoints = [];           
 
-
+        //brush subset
         if(self.marked){
             d3.selectAll("circle").style("opacity", function(d) {
                 
@@ -314,6 +314,7 @@ function map(data) {
             drawLines(sortByKey(newDrawPoints, "date" ));      
 
         }
+        //brush full data set
         else{
             d3.selectAll("circle").style("opacity", function(d) {
 
@@ -340,13 +341,13 @@ function map(data) {
   
     };
 
-
+    //att travel line
     function addLine() {
-      self.flightPath.setMap(map);  
+      self.travelPath.setMap(map);  
     }
-
+    //remove travel line
     function removeLine() {
-      self.flightPath.setMap(null);
+      self.travelPath.setMap(null);
     }
 
     // counting hired rides and push total hired rides for each taxi into a new array
@@ -487,7 +488,7 @@ function map(data) {
       return monthObject;
         
     }   
-
+    //split data inte new structure
     function prepareGraphData(data){
          // creating a new stucture for the dataset without id, date and hired arrays
         var graphData = [];
