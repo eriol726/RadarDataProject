@@ -1,4 +1,10 @@
-function gridClustering(data){
+/*******************************************************
+Authors: Pelle Serander, Jens Jakobsson and Erik Olsson.
+Last Updated: 2016-03-11
+
+*********************************************************/
+
+function gridClustering(data) {
 var stepX = 0;
 	var stepY = 0;
 	var xMax = 0;

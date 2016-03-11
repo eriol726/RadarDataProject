@@ -1,3 +1,14 @@
+/*******************************************************
+Authors: Pelle Serander, Jens Jakobsson and Erik Olsson.
+Last Updated: 2016-03-11
+
+The code is based on the skeleton program found in lab 3
+of the course TNM048 at Linköpings Univeristy year 2016.
+
+http://staffwww.itn.liu.se/~jimjo/courses/TNM048/
+
+*********************************************************/
+
 //Focus+Context via Brushing
 //http://bl.ocks.org/mbostock/1667367
 
