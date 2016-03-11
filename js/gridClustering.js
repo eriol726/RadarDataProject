@@ -91,7 +91,7 @@ var stepX = 0;
 
 
 }
-
+//https://github.com/agershun/alasql
 function exportData(centroidPoints) {
      alasql("SELECT * INTO CSV('cities.csv') FROM ?",[centroidPoints]);
 }
