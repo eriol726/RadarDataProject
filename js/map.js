@@ -71,12 +71,6 @@ function map(data) {
         width = mapDiv.width() - margin.right - margin.left,
         height = mapDiv.height() - margin.top - margin.bottom ;
 
-
-    //Variable for OPTICS
-    var opticsArray = [];
-    var distRad;
-    var minPts;
-
     var format = d3.time.format.utc("%Y-%m-%d %H:%M:%S"); 
 
 
