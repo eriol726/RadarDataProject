@@ -49,6 +49,7 @@
             
         })
 
+        //Add to list
         uniqueID.forEach(function (d, i) {
             self.detList.add({
                     id: "Taxi ID: " + uniqueID[i],

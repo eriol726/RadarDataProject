@@ -11,7 +11,7 @@ var stepX = 0;
 	var timeStamp = [];
 	var hired = [];
 
-	//hitta hörnpunkter
+	//Find corners
 	data.forEach(function(d){
 		if( parseFloat(d.x_coord) > xMax){
 			xMax = parseFloat(d.x_coord);
