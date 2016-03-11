@@ -31,7 +31,7 @@ function map(data) {
      //creating a new data structure for map data
     var mapData = {type: "FeatureCollection", features: mapData(data)};
     console.log("done, with structureing mapData");
-   
+
     document.getElementById("reset").addEventListener("click", function(){
         area1.update2(TotalRidesPerDay);
         self.marked = false;
@@ -42,11 +42,11 @@ function map(data) {
 
 
     });
-   
-    // create a new object array with an other structure 
+
+    // create a new object array with an other structure
     function mapData(d ) {
         var newData = [];
-        
+
         for (var i = 0; i < LINES; i++) {
 
             newData.push({
@@ -82,7 +82,7 @@ function map(data) {
         width = mapDiv.width() - margin.right - margin.left,
         height = mapDiv.height() - margin.top - margin.bottom ;
 
-    var format = d3.time.format.utc("%Y-%m-%d %H:%M:%S"); 
+    var format = d3.time.format.utc("%Y-%m-%d %H:%M:%S");
 
 
     //Assings the svg canvas to the map div
@@ -133,7 +133,7 @@ function map(data) {
                   .attr("r", 4.5)
                   .attr("cx", padding)
                   .attr("cy", padding);
-            
+
 
             // Add a label.
             marker.append("text")
@@ -141,8 +141,8 @@ function map(data) {
                   .attr("y", padding)
                   .attr("dy", ".31em")
                   .text(function(d) { return d.key; });
-            
-              
+
+
             //Draw data id's coordinates on google.maps
             function transform(d) {
                 d = new google.maps.LatLng(d.geometry.coordinates[1], d.geometry.coordinates[0]);
@@ -178,22 +178,22 @@ function map(data) {
                 //sending information from marked point to the update list function
                 list1.update(d, uniqeIdAndRides, marker);
                 self.marked = true;
-                    
+
                 // find marked circle and highlight it
                 marker.select("circle")
                .style("opacity", function (di, m) {
-                    if(d.geometry.coordinates[0] == di.geometry.coordinates[0] 
+                    if(d.geometry.coordinates[0] == di.geometry.coordinates[0]
                         && d.geometry.coordinates[1] == di.geometry.coordinates[1]){
                         console.log("found point");
                         return 1;
                     }
-              
+
                 return 0.1;
-                  
+
                  })
                marker.select("circle")
                     .style("fill", function (di, m) {
-                    if(d.geometry.coordinates[0] == di.geometry.coordinates[0] 
+                    if(d.geometry.coordinates[0] == di.geometry.coordinates[0]
                         && d.geometry.coordinates[1] == di.geometry.coordinates[1]){
                         console.log("found point");
                         return "red";
@@ -205,9 +205,9 @@ function map(data) {
 
     self.click = function ( clickedTaxiStatics) {
 
-        
 
-        self.points = lineData(mapData.features, clickedTaxiStatics.id); 
+
+        self.points = lineData(mapData.features, clickedTaxiStatics.id);
         var transformedPoints = [];
 
         self.points.forEach(function(d){
@@ -215,7 +215,7 @@ function map(data) {
             transformedPoints.push(coord);
         })
 
-                
+
         drawLines(transformedPoints);
 
         //Returning a new label if it is marked
@@ -224,10 +224,10 @@ function map(data) {
         //updating graph
         area1.update1(clickedTaxiStatics) ;
         addLine();
- 
+
         }
 
-        
+
     }
     //return the pints that are used to draw lines
     function lineData(data, id){
@@ -240,16 +240,16 @@ function map(data) {
                     lineData.push({x_coord:parseFloat(data[i].geometry.coordinates[0]),y_coord: parseFloat(data[i].geometry.coordinates[1]), date:timeArray[j]});
                 }
             })
-            
+
         }
-    
-        sortByKey(lineData, "date") 
-    
-      
+
+        sortByKey(lineData, "date")
+
+
         return lineData;
 
     }
-    
+
     function sortByKey(array, key) {
         return array.sort(function(a, b) {
             var x = a[key]; var y = b[key];
@@ -275,11 +275,11 @@ function map(data) {
         console.log("done, drawLines")
 
     }
-   
+
 
     // Bind our overlay to the map…
     overlay.setMap(map);
- 
+
 
     //Calls the filtering function
     d3.select("#slider").on("input", function () {
@@ -288,54 +288,54 @@ function map(data) {
 
 
     this.filterTime = function (value) {
-        
+
 
         var startTime = value[0].getTime();
         var endTime = value[1].getTime();
 
 
-        var newDrawPoints = [];           
+        var newDrawPoints = [];
 
         //brush subset
         if(self.marked){
             d3.selectAll("circle").style("opacity", function(d) {
-                
+
                 for(var i = 0; i < self.points.length; i++){
-                    if(self.points[i].x_coord == d.geometry.coordinates[0] 
+                    if(self.points[i].x_coord == d.geometry.coordinates[0]
                     && self.points[i].y_coord == d.geometry.coordinates[1]){
                         var time = new Date(self.points[i].date);
 
                         if(startTime <= time.getTime() && time.getTime() <= endTime){
                             newDrawPoints.push({lat: self.points[i].y_coord, lng: self.points[i].x_coord, date: self.points[i].date});
                             return 0.1;
-                        } 
+                        }
                     }
                 }
 
-                
+
                 return 0.05;
-              
-            })  
-            drawLines(sortByKey(newDrawPoints, "date" ));      
+
+            })
+            drawLines(sortByKey(newDrawPoints, "date" ));
 
         }
         //brush full data set
         else{
             d3.selectAll("circle").style("opacity", function(d) {
 
-                
+
                 for (var i = 0; i < d.properties.dates.length; i++){
                     var time = new Date(d.properties.dates[i]);
 
                     if(startTime <= time.getTime() && time.getTime() <= endTime){
                         return 1;
-                    }           
+                    }
                 }
                 return 0;
-            
+
             });
         }
-      
+
     };
 
 
@@ -343,12 +343,12 @@ function map(data) {
     this.filterUpOff = function (value) {
 
         var data = value;
-  
+
     };
 
     //att travel line
     function addLine() {
-      self.travelPath.setMap(map);  
+      self.travelPath.setMap(map);
     }
     //remove travel line
     function removeLine() {
@@ -357,7 +357,7 @@ function map(data) {
 
     // counting hired rides and push total hired rides for each taxi into a new array
     function totalCoustumerForTaxi(graphData)
-    {    
+    {
 
         var uniqeIdAndRides =[];
         var hiredRides = 0;
@@ -376,7 +376,7 @@ function map(data) {
             var currentDay = currentDate.getDate();
             var prevDay = prevDate.getDate();
 
-            
+
             // check absolut first element
             if (i ==1 && graphData[i-1].hired == "t") {
                  hiredRides++;
@@ -397,7 +397,7 @@ function map(data) {
                 if(graphData[i].hired == 'f' &&  graphData[i+1].hired == 't' ){
                     hiredRides++;
                 }
-                
+
             }
 
             // push hiredRides for same ID into monthArray when day i is changed
@@ -410,17 +410,17 @@ function map(data) {
                     }
 
                 }
-                
+
             }
                 // push month to uniqeID object array
             if(graphData[i-1].id != graphData[i].id){
-              
+
                 uniqeIdAndRides.push({id: graphData[i].id, month: month});
                 month = creatMonthArray();
                 hiredRides=0;
-            }           
+            }
         }
-      
+
     return uniqeIdAndRides;
 
     }
@@ -430,13 +430,13 @@ function map(data) {
 
         var uniqeIdAndRides =[];
         var BreakException= {};
-        
+
 
         var ridesPerMonth = [];
         var monthObject = [];
         var totalIds = [];
-       
-        for (var n = 0; n < 31; n++) 
+
+        for (var n = 0; n < 31; n++)
         {
             // define time interval for current day
             var dateStringBegin = "2013-03-"+(n+1)+" 00:00:00";
@@ -444,26 +444,26 @@ function map(data) {
 
             var beginTime = new Date(dateStringBegin);
             var endTime = new Date(dateStringEnd);
-            
+
             //reset the rides for current day
-            
+
             var hiredRides = 0;
-            
+
             for (var i = 0; i < graphData.length; i++) {
 
                 // check if we are out of bounds
                 if(i+1 == graphData.length){
                     break;
                 }
-                 
+
                 var currentDate = new Date(graphData[i].date);
-                
+
                 //find rides for current day
                 if(beginTime.getTime() <= currentDate.getTime() &&   endTime.getTime() >= currentDate.getTime()  ){
-                       
+
                     if(typeof graphData[i+1] === "undefined"){
                         throw BreakException;
-                    } 
+                    }
                     //check if next taxi is hired in same block
                     else if (graphData[i+1].id == graphData[i].id){
                         if(graphData[i].hired == 'f' &&  graphData[i+1].hired == 't'){
@@ -472,27 +472,26 @@ function map(data) {
                     }
                     //check last sample in a block
                     else if (graphData[i+1].id != graphData[i].id){
-                        // if it is a uniqe id and hired is true, count one 
+                        // if it is a uniqe id and hired is true, count one
                         if(graphData[i].hired == 't'  && graphData[i-1].id != graphData[i].id){
                             hiredRides++;
                         }
                     }
                 }
             }
-            
-            
+
+
             //add all the rides for all taxis for current day
             var objectDateString = "2013-03-"+(n+1)+" 00:00:00";
             var objectDate = new Date(objectDateString);
             monthObject.push({date:  objectDateString, rides: hiredRides});
 
         }
-        // must do this for being able to call d.month in area()
 
 
       return monthObject;
-        
-    }   
+
+    }
     //split data inte new structure
     function prepareGraphData(data){
          // creating a new stucture for the dataset without id, date and hired arrays
@@ -509,19 +508,19 @@ function map(data) {
                 graphData.push({date: date[n], id:parseFloat(id[n]) , hired:hired[n]});
             }
         }
-        
+
         console.log("done, with structureing graphData");
 
         //sort first by id, then by date
         var s = firstBy(function (v1, v2) { return v1.id < v2.id ? -1 : (v1.id > v2.id ? 1 : 0); })
-                .thenBy(function (v1, v2) { 
+                .thenBy(function (v1, v2) {
 
                     var v1Date = new Date(v1.date);
                     var v2Date = new Date(v2.date);
-                    return v1Date.getTime() - v2Date.getTime(); 
+                    return v1Date.getTime() - v2Date.getTime();
         });
 
-            
+
         graphData.sort(s);
 
         return graphData;
@@ -529,8 +528,8 @@ function map(data) {
 
     function creatMonthArray(){
         month = [];
-         for(var n = 0; n < 31; n++){    
-            var dateString = "2013-03-"+(n+1)+" 00:00:01"; 
+         for(var n = 0; n < 31; n++){
+            var dateString = "2013-03-"+(n+1)+" 00:00:01";
             month[n] =  {date: dateString, rides:  0};
         }
 
@@ -538,4 +537,3 @@ function map(data) {
     }
 
 }
-
